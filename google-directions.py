@@ -1,12 +1,9 @@
 import requests as req
 import json
 
-
 start = 'Houston, TX'
 stop = 'Chicago, IL'
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
-
-#mode = 
 
 url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&key=' + key
 r = req.get(url)
@@ -28,13 +25,8 @@ last_end_loc = last_step['end_location']
 end_lat = last_end_loc['lat']
 end_long = last_end_loc['lng']
 
-print('start lat', start_lat)
-print('start long', start_long)
-print('end lat', end_lat)
-print('end long', end_long)
-
-def calc_cab_fare(file, sec, mile, num_pass):
-	with open('IL_taxi.json') as data_file:
+def calc_cab_fare(file, min, mile, num_pass):
+	with open() as data_file:
 		data = json.load(data_file)
 	base_fare = data['base_fare']
 	per_mile = data["per_mile"]
@@ -50,16 +42,19 @@ def calc_cab_fare(file, sec, mile, num_pass):
 	else:
 		pass_fare = 0
 	
-	return base + (per_mile * mile) + (per_min * mile) + pass_fare
+	return base + (per_mile * mile) + (per_min * min) + pass_fare
 
 sec = 0
-miles = 0
+meters = 0
 for route in data['routes']:
 	leg = route['leg']
 	duration = leg['duration']
 	distance = leg['distance']
 	
 	sec += duration['value']
-	miles += duration['value']
-	
-	
+	meters += duration['value']
+
+min = float(sec)/60.00
+
+calc_cab_fare('IL_taxi.json', min, miles, num_pass)
+print(
