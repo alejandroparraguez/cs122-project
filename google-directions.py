@@ -4,6 +4,7 @@ import json
 start = 'Houston, TX'
 stop = 'Chicago, IL'
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
+uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
 
 def start_end_coord(start, stop, key):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&key=' + key
@@ -63,3 +64,33 @@ min = float(sec)/60.00
 miles = meters * 0.00062137
 
 calc_cab_fare('IL_taxi.json', min, miles, num_pass)
+
+def calc_uber_price_time(start,stop,goog_key,ub_key):
+	url = 'https://api.uber.com/v1/estimates/price'
+	[st_lat,st_lon,end_lat,end_lon] = start_end_coord(start, stop, goog_key)
+
+	parameters = {
+    'server_token': ub_key,
+    'start_latitude': st_lat
+    'start_longitude': st_lon,
+    'end_latitude': end_lat,
+    'end_longitude': end_lon
+	}
+
+	response = req.get(url, params=parameters)
+	data = response.json()
+
+	uber_estimates = {}
+	for dicti in data['prices']:
+		est_key = dicti["display_name"]
+		uber_estimates[est_key] = {}
+		price = dicti["estimate"]
+		length = dicti["duration"]
+		uber_estimates[est_key]["fare"] = price
+		uber_estimates[est_key]["time"] = length
+
+	return uber_estimates		
+
+
+
+
