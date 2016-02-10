@@ -5,28 +5,33 @@ start = 'Houston, TX'
 stop = 'Chicago, IL'
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 
-url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&key=' + key
-r = req.get(url)
-data = r.json()
+def start_end_coord(start, stop, key):
+	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&key=' + key
+	r = req.get(url)
+	data = r.json()
+	
+	#Start coordinates
+	route0 = data['routes'][0]
+	leg0 = route0['legs'][0]
+	step0 = leg0['steps'][0]
+	start_loc0 = step0['start_location']
 
-route0 = data['routes'][0]
-leg0 = route0['legs'][0]
-step0 = leg0['steps'][0]
-start_loc0 = step0['start_location']
+	start_lat = start_loc0['lat']
+	start_long = start_loc0['lng']
+	
+	#End coordinates
+	last_route = data['routes'][-1]
+	last_leg = last_route['legs'][-1]
+	last_step = last_leg['steps'][-1]
+	last_end_loc = last_step['end_location']
 
-start_lat = start_loc0['lat']
-start_long = start_loc0['lng']
-
-last_route = data['routes'][-1]
-last_leg = last_route['legs'][-1]
-last_step = last_leg['steps'][-1]
-last_end_loc = last_step['end_location']
-
-end_lat = last_end_loc['lat']
-end_long = last_end_loc['lng']
+	end_lat = last_end_loc['lat']
+	end_long = last_end_loc['lng']
+	
+	return start_lat, start_long, end_lat, end_long
 
 def calc_cab_fare(file, min, mile, num_pass):
-	with open() as data_file:
+	with open(file) as data_file:
 		data = json.load(data_file)
 	base_fare = data['base_fare']
 	per_mile = data["per_mile"]
@@ -58,4 +63,3 @@ min = float(sec)/60.00
 miles = meters * 0.00062137
 
 calc_cab_fare('IL_taxi.json', min, miles, num_pass)
-print(
