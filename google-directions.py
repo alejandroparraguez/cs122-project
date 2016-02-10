@@ -55,6 +55,7 @@ for route in data['routes']:
 	meters += duration['value']
 
 min = float(sec)/60.00
+miles = meters * 0.00062137
 
 calc_cab_fare('IL_taxi.json', min, miles, num_pass)
 print(
