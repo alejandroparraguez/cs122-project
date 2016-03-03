@@ -5,7 +5,7 @@ from django.template import loader
 from django.shortcuts import render, get_object_or_404
 
 #from .models import choiceQuestion, addressQuestion
-from directions import *
+from directions import testing
 from .forms import infoForm
 
 
