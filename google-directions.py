@@ -104,7 +104,8 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 
 	return uber_estimates		
 
-
-ub = calc_uber_price_time(address_orig,address_dest,key,uber_key)
+if __name__ == "__main__":
+	ub = calc_uber_price_time(address_orig,address_dest,key,uber_key)
+	print(ub)
 
 
