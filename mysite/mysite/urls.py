@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.http import HttpResponse
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^menu/', include('menu.urls')),
+    url(r'^test/$', lambda x: HttpResponse('test'), name='test'),
 ]
