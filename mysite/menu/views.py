@@ -17,11 +17,15 @@ def get_travel_info(request):
 			passengers = form.cleaned_data['passengers']
 			start_address = form.cleaned_data['startAddress']
 			end_address = form.cleaned_data['endAddress']
-			test = testing(start_address, end_address, passengers)
-			print(start_address)
+			backend = testing(start_address, end_address, passengers)
+			#print(start_address)
 			#return HttpResponseRedirect('/menu/thanks/')
+<<<<<<< HEAD
 			#return HttpResponse(test)
 			return_directions(test)
+=======
+			return HttpResponse(backend)
+>>>>>>> 41c9f5a5ecc098122ac915c48b632e93e5fa139d
 	else:
 		form = infoForm()
 	return render(request, 'menu/index.html', {'form': form})
