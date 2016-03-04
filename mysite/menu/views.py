@@ -20,7 +20,8 @@ def get_travel_info(request):
 			test = testing(start_address, end_address, passengers)
 			print(start_address)
 			#return HttpResponseRedirect('/menu/thanks/')
-			return HttpResponse(test)
+			#return HttpResponse(test)
+			return_directions(test)
 	else:
 		form = infoForm()
 	return render(request, 'menu/index.html', {'form': form})
