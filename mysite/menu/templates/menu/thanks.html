@@ -1,1 +1,57 @@
-THanks!
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<h1>Welcome to Fare Compare Results!</h1>
+
+<body>
+<p>"hello world, please make django magically work"</p>
+   
+    <h3>Taxi:</h3>
+    <table class="Taxi"; border=1px>
+        <tr>
+            <td> Time </td>
+            <td> Cost </td>
+        </tr>
+        <tr>
+            {% for entry in taxi %}
+                <td>{{ entry }}</td>
+            {% endfor %}
+        </tr>   
+        <tr>  </tr>             
+    </table>
+
+
+    <h3>Uber:</h3>
+    <table class="Uber"; border=1px>
+        <tr>
+            <td> Service </td>
+            <td> Time </td>
+            <td> Cost </td>
+        </tr>
+        {% for service, value in uber.items %}
+            <tr>
+                <td>{{ service }}</td>
+                {% for entry in value %}
+                    <td>{{ entry }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}             
+    </table>
+
+    <h3>Public Transport:</h3>
+    <table class="Public"; border=1px>
+        <tr>
+            <td> Time </td>
+            <td> Cost </td>
+        </tr>
+        <tr>
+            {% for entry in public %}
+                <td>{{ entry }}</td>
+            {% endfor %}
+        </tr>                
+    </table>
+
+</body>
+</html>
+
+
