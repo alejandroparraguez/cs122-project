@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"base_fare": "3.25",
 	"per_mile": "2.25",
 	"per_min": "100/3",
@@ -6,4 +7,21 @@
 	"additional_passenger": "0.50",
 	"clean_fee": "50.00",
 	"airport_tax": "4.00"
+=======
+	"taxi": {
+		"base_fare": "3.25",
+		"per_mile": "2.25",
+		"per_min": "100/3",
+		"first_passenger": "1.00",
+		"additional_passenger": "0.50",
+		"clean_fee": "50.00",
+		"airport_tax": "4.00"
+	},
+
+	"transit": {
+		"BUS": 2,
+		"SUBWAY": 4,
+		"HEAVY_RAIL": 7
+	}
+>>>>>>> 1500972a260f7200f3c7ed25574e299f4eed6919
 }
