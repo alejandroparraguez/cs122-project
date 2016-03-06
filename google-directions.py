@@ -1,12 +1,9 @@
 import requests as req
 import json
 
-start = 'Houston, TX'
-stop = 'Chicago, IL'
-
 #test Uber
-address_orig  = "5433 South University Avenue"
-address_dest = "Art Institute of Chicago"
+start  = "5433 South University Avenue, Chicago"
+stop = "Pilsen, Chicago"
 
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
@@ -75,11 +72,6 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 	url = 'https://api.uber.com/v1/estimates/price'
 	[st_lat,st_lon,end_lat,end_lon] = start_end_coord(strt, stp, goog_key)
 
-	print(st_lat)
-	print(st_lon)
-	print(end_lat)
-	print(end_lon)
-
 	parameters = {
     'server_token': ub_key,
     'start_latitude': st_lat,
@@ -92,7 +84,6 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 	data = response.json()
 
 	uber_estimates = {}
-	print(data)
 
 	for dicti in data['prices']:
 		est_key = dicti["display_name"]
@@ -105,6 +96,6 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 	return uber_estimates		
 
 
-ub = calc_uber_price_time(address_orig,address_dest,key,uber_key)
-
+ub = calc_uber_price_time(start,stop,key,uber_key)
+print(ub)
 
