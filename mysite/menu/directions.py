@@ -7,14 +7,20 @@ import json
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
 
-def master_function(start,stop):
+def read_fare_info(file_name):
+	with open(file_name) as data_file:
+		fare_info = json.load(data_file)
+	return fare_info
+
+def driving_google_req(start,stop):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&key=' + key
 	r = req.get(url)
 	data = r.json()
-	coord = start_end_coord(start, stop, key)
+	coord = start_end_coord(start, stop, key, data)
+	return coord, data
 	
 
-def start_end_coord(start, stop, key):
+def start_end_coord(start, stop, key, data):
 	
 	#Start coordinates
 	route0 = data['routes'][0]
@@ -36,48 +42,40 @@ def start_end_coord(start, stop, key):
 	
 	return start_lat, start_long, end_lat, end_long
 
-def calc_cab_fare(file, min, mile, num_pass):
-	with open(file) as data_file:
-		data = json.load(data_file)
-	base_fare = data['base_fare']
-	per_mile = data["per_mile"]
-	per_min = data["per_min"]
-	first_passenger = data["first_passenger"]
-	add_passenger = data["additional_passenger"]
+def calc_cab_fare(mile, num_pass, data, fare_info):
 	
-	clean_fee = data["clean_fee"]
-	airport_tax = data["airport_tax"]
+	sec = 0
+	meters = 0
+	for route in data['routes']:
+		leg = route['leg']
+		duration = leg['duration']
+		distance = leg['distance']
+		
+		sec += duration['value']
+		meters += duration['value']
+
+	minutes = float(sec)/60.00
+	miles = meters * 0.00062137
+	
+	base_fare = fare_info['base_fare']
+	per_mile = fare_info["per_mile"]
+	per_min = fare_info["per_min"]
+	first_passenger = fare_info["first_passenger"]
+	add_passenger = fare_info["additional_passenger"]
+	clean_fee = fare_info["clean_fee"]
+	airport_tax = fare_info["airport_tax"]
 	
 	if num_pass > 1:
 		pass_fare = first_passenger + add_passenger * (num_pass - 1)
 	else:
 		pass_fare = 0
 	
-	return base + (per_mile * mile) + (per_min * min) + pass_fare
-"""
-sec = 0
-meters = 0
-for route in data['routes']:
-	leg = route['leg']
-	duration = leg['duration']
-	distance = leg['distance']
-	
-	sec += duration['value']
-	meters += duration['value']
+	return base + (per_mile * mile) + (per_min * minutes) + pass_fare
 
-min = float(sec)/60.00
-miles = meters * 0.00062137
 
-calc_cab_fare('IL_taxi.json', min, miles, num_pass)
-"""
-def calc_uber_price_time(strt,stp,goog_key,ub_key):
+def calc_uber_price_time(strt, stp, goog_key, ub_key, dt):
 	url = 'https://api.uber.com/v1/estimates/price'
-	[st_lat,st_lon,end_lat,end_lon] = start_end_coord(strt, stp, goog_key)
-
-	print(st_lat)
-	print(st_lon)
-	print(end_lat)
-	print(end_lon)
+	[st_lat, st_lon, end_lat, end_lon] = start_end_coord(strt, stp, goog_key, dt)
 
 	parameters = {
     'server_token': ub_key,
@@ -91,7 +89,6 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 	data = response.json()
 
 	uber_estimates = {}
-	print(data)
 
 	for dicti in data['prices']:
 		est_key = dicti["display_name"]
@@ -103,15 +100,15 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 
 	return uber_estimates	
 
-def testing(start, stop, travlers):
-	return start
-
-def calc_transit(start, stop, key, file_name):
+def calc_transit(start, stop, key, fare_info, travlers):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&mode=transit' + '&key=' + key
+	print(url)
 	r = req.get(url)
 	data = r.json()
 
+	#print("data before: ", data['routes'])
 	duration_text = data['routes'][0]['legs'][0]['duration']['text']
+	#print("duration after: ", duration_text)
 	duration = data['routes'][0]['legs'][0]['duration']['value']
 	instructions = []
 	transit = []
@@ -119,19 +116,36 @@ def calc_transit(start, stop, key, file_name):
 		instructions.append(leg['html_instructions'])
 		if 'transit_details' in leg.keys():
 			transit.append(leg['transit_details']['line']['vehicle']['type'])
-	cost = calc_transit_cost(file_name, transit)
+	cost = calc_transit_cost(transit, fare_info)
+
+	return ["Total cost: $" + str(int(cost*travlers)), transit]
 
 
-def calc_transit_cost(file_name, transit):
-	with open(file_name) as data_file:
-		data = json.load(data_file)
-	bus_fare = data['transit']['BUS']
-	subway_fare = data['transit']['SUBWAY']
+def calc_transit_cost(transit, fare_info):
+	
 	total_cost = 0.0
 	for vehicle in transit:
-		print data['transit'][vehicle]
-		total_cost = total_cost + float(data['transit'][vehicle])
+		total_cost = total_cost + float(fare_info['transit'][vehicle])
 	return total_cost
 
+def testing(start, stop, travlers):
 
+	fare_info = read_fare_info("menu/IL_taxi.json")
+	#fare_info = read_fare_info("IL_taxi.json")
+	'''
 
+	coord, data = driving_google_req(start,stop)
+
+	calc_cab_fare(file, mile, num_pass, data, fare_info)
+	'''
+
+	#coord, data = driving_google_req(start,stop)
+
+	#ub_est = calc_uber_price_time(start, stop, key, uber_key, data)
+
+	
+	transit = calc_transit(start, stop, key, fare_info, travlers)
+	print(transit)
+	return transit
+
+testing("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)

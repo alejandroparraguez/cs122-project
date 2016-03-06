@@ -95,7 +95,14 @@ def calc_uber_price_time(strt,stp,goog_key,ub_key):
 
 	return uber_estimates		
 
+<<<<<<< HEAD
 
 ub = calc_uber_price_time(start,stop,key,uber_key)
 print(ub)
+=======
+if __name__ == "__main__":
+	ub = calc_uber_price_time(address_orig,address_dest,key,uber_key)
+	print(ub)
+
+>>>>>>> 66bb9ccb1d4f952b388f2af6c5d66f9fbded1945
 
