@@ -51,12 +51,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-<<<<<<< HEAD
-ROOT_URLCONF = 'mysite.urls'
-=======
 #ROOT_URLCONF = 'mysite.urls'
 ROOT_URLCONF = 'menu.urls'
->>>>>>> 1500972a260f7200f3c7ed25574e299f4eed6919
 
 TEMPLATES = [
     {

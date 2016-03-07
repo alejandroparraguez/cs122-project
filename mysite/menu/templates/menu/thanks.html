@@ -1,19 +1,15 @@
-<<<<<<< HEAD
-THanks!
-=======
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <h1>Welcome to Fare Compare Results!</h1>
 
 <body>
-<p>"hello world, please make django magically work"</p>
    
     <h3>Taxi:</h3>
     <table class="Taxi"; border=1px>
         <tr>
-            <td> Time </td>
-            <td> Cost </td>
+            <th> Time </th>
+            <th> Cost </th>
         </tr>
         <tr>
             {% for entry in taxi %}
@@ -27,9 +23,9 @@ THanks!
     <h3>Uber:</h3>
     <table class="Uber"; border=1px>
         <tr>
-            <td> Service </td>
-            <td> Time </td>
-            <td> Cost </td>
+            <th> Service </th>
+            <th> Time </th>
+            <th> Cost </th>
         </tr>
         {% for service, value in uber.items %}
             <tr>
@@ -44,8 +40,8 @@ THanks!
     <h3>Public Transport:</h3>
     <table class="Public"; border=1px>
         <tr>
-            <td> Time </td>
-            <td> Cost </td>
+            <th> Time </th>
+            <th> Cost </th>
         </tr>
         <tr>
             {% for entry in public %}
@@ -57,5 +53,3 @@ THanks!
 </body>
 </html>
 
-
->>>>>>> 1500972a260f7200f3c7ed25574e299f4eed6919
