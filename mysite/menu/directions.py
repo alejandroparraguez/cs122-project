@@ -18,7 +18,9 @@ def driving_google_req(start,stop):
 	r = req.get(url)
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
-	return coord, data
+
+	driving_map = "https://www.google.com/maps/embed/v1/directions?key=" +key+ "&origin=" +str(start)+ "&destination="+str(stop)
+	return coord, data, driving_map
 	
 
 def start_end_coord(start, stop, key, data):
@@ -72,7 +74,7 @@ def calc_cab_fare(mile, num_pass, data, fare_info):
 		pass_fare = 0
 	
 	return base + (per_mile * mile) + (per_min * minutes) + pass_fare
-
+	
 
 def calc_uber(crd, ub_key):
 	url = 'https://api.uber.com/v1/estimates/price'
@@ -139,11 +141,11 @@ def calc_transit_cost(transit, fare_info):
 def master(start, stop, travelers):
 
 	fare_compare = {}
+	map_urls = []
 	fare_info = read_fare_info("menu/IL_taxi.json")
 	#fare_info = read_fare_info("IL_taxi.json")
 
-	coord, data = driving_google_req(start,stop)
-
+	coord, data, driving_map = driving_google_req(start,stop)
 	#fare_compare['taxi'] = calc_cab_fare(file_name, mile, num_pass, data, fare_info)
 
 	#ub_est = calc_uber_price_time(start, stop, key, uber_key, data)
@@ -155,7 +157,7 @@ def master(start, stop, travelers):
 	fare_compare['public'] = calc_transit(start, stop, key, fare_info, travelers)
 	
 	#print(transit)
-	return fare_compare
+	return fare_compare, driving_map
 
 #testing("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
 fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}

@@ -19,11 +19,11 @@ def get_travel_info(request):
 			passengers = form.cleaned_data['passengers']
 			start_address = form.cleaned_data['startAddress']
 			end_address = form.cleaned_data['endAddress']
-			backend = master(start_address, end_address, passengers)
+			backend, map_urls = master(start_address, end_address, passengers)
 			#print(start_address)
 			#return HttpResponseRedirect('/menu/thanks/')
 			#return HttpResponse(test)
-			return render(request, 'menu/thanks.html', backend) #fake_directions)#{"fake_directions": fake_directions})
+			return render(request, 'menu/thanks.html', backend, map_urls) #fake_directions)#{"fake_directions": fake_directions})
 	else:
 		form = infoForm()
 	return render(request, 'menu/index.html', {'form': form})
