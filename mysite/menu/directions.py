@@ -1,8 +1,9 @@
 import requests as req
 import json
 
-#start = "5433 South University Avenue, Chicago"
-#stop = "Art Institute of Chicago"
+start = "5413 South Woodlawn Avenue, Chicago"
+#stop = "Midway International Airport, Chicago"#
+stop = "Art Institute of Chicago"
 
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
@@ -99,7 +100,6 @@ def calc_uber(crd, ub_key):
 
 def calc_transit(start, stop, key, fare_info, travelers):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&mode=transit' + '&key=' + key
-	print(url)
 	r = req.get(url)
 	data = r.json()
 
@@ -107,6 +107,7 @@ def calc_transit(start, stop, key, fare_info, travelers):
 	duration_text = data['routes'][0]['legs'][0]['duration']['text']
 	#print("duration after: ", duration_text)
 	duration = data['routes'][0]['legs'][0]['duration']['value']
+	print("duration: ", duration_text, duration/60)
 	instructions = []
 	transit = []
 	for leg in data['routes'][0]['legs'][0]['steps']:
@@ -115,10 +116,11 @@ def calc_transit(start, stop, key, fare_info, travelers):
 			transit.append(leg['transit_details']['line']['vehicle']['type'])
 	cost = calc_transit_cost(transit, fare_info)
 
-	print transit
+	print ("instructions ", instructions)
+	print "transit: ", transit
 
 	return [int(duration/60), cost*travelers] #["Total cost: $" + str(int(cost*travlers)), transit]
-
+	
 
 def calc_transit_cost(transit, fare_info):
 	
@@ -150,3 +152,6 @@ def master(start, stop, travelers):
 
 #testing("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
 fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
+if __name__ == "__main__":
+	fare_info = read_fare_info("IL_taxi.json")
+	calc_transit(start, stop, key, fare_info, 2)
