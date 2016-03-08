@@ -99,7 +99,8 @@ def calc_uber(crd, ub_key):
 	return uber_estimates	
 
 def calc_transit(start, stop, key, fare_info, travelers):
-	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&mode=transit' + '&key=' + key
+	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&mode=transit&transit_routing_preference=fewer_transfers' + '&key=' + key
+	print(url)
 	r = req.get(url)
 	data = r.json()
 
@@ -117,9 +118,9 @@ def calc_transit(start, stop, key, fare_info, travelers):
 	cost = calc_transit_cost(transit, fare_info)
 
 	print ("instructions ", instructions)
-	print "transit: ", transit
+	print("transit: ", transit)
 
-	return [int(duration/60), cost*travelers] #["Total cost: $" + str(int(cost*travlers)), transit]
+	return [int(duration/60), cost*travelers, instructions] #["Total cost: $" + str(int(cost*travlers)), transit]
 
 def divy():
 	url = 'http://www.divvybikes.com/stations/json/stations'
