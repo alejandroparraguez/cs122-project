@@ -10,8 +10,8 @@
 	},
 
 	"transit": {
-		"BUS": 2,
-		"SUBWAY": 4,
-		"HEAVY_RAIL": 7
+		"BUS": 2.25,
+		"SUBWAY": 3,
+		"HEAVY_RAIL": 5
 	}
 }

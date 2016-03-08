@@ -5,7 +5,7 @@
 
 <body>
    
-    <h3>Taxi:</h3>
+    <h2>Taxi:</h2>
     <table class="Taxi"; border=1px>
         <tr>
             <th> Time </th>
@@ -27,7 +27,7 @@
     </iframe>    
 
 
-    <h3>Uber:</h3>
+    <h2>Uber:</h2>
     <table class="Uber"; border=1px>
         <tr>
             <th> Service </th>
@@ -44,18 +44,23 @@
         {% endfor %}             
     </table>
 
-    <h3>Public Transport:</h3>
+    <h2>Public Transport:</h2>
     <table class="Public"; border=1px>
         <tr>
             <th> Time </th>
             <th> Cost </th>
         </tr>
         <tr>
-            {% for entry in public %}
-                <td>{{ entry }}</td>
-            {% endfor %}
+            <td>{{ public.0 }}</td>
+            <td>{{ public.1 }}</td>
         </tr>                
     </table>
+    <p>
+        <b>Directions: </b> <br>
+        {% for line in public.2 %}
+            {{line}} <br>
+        {% endfor %}
+    </p>
 
 </body>
 </html>
