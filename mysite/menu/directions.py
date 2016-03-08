@@ -120,7 +120,13 @@ def calc_transit(start, stop, key, fare_info, travelers):
 	print "transit: ", transit
 
 	return [int(duration/60), cost*travelers] #["Total cost: $" + str(int(cost*travlers)), transit]
-	
+
+def divy():
+	url = 'http://www.divvybikes.com/stations/json/stations'
+	r = req.get(url)
+	data = r.json()
+
+	print data['stationBeanList'][0]
 
 def calc_transit_cost(transit, fare_info):
 	
@@ -154,4 +160,5 @@ def master(start, stop, travelers):
 fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
 if __name__ == "__main__":
 	fare_info = read_fare_info("IL_taxi.json")
-	calc_transit(start, stop, key, fare_info, 2)
+	#calc_transit(start, stop, key, fare_info, 2)
+	divy()
