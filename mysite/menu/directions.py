@@ -1,12 +1,13 @@
 import requests as req
 import json
 
-start = "5413 South Woodlawn Avenue, Chicago"
+#start = "5413 South Woodlawn Avenue, Chicago"
 #stop = "Midway International Airport, Chicago"#
-stop = "Art Institute of Chicago"
+#stop = "Art Institute of Chicago"
 
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
+map_key ='AIzaSyDrUubINuulSxDYp5rmG-NuvR-Zo_oLrmY'
 
 def read_fare_info(file_name):
 	with open(file_name) as data_file:
@@ -19,7 +20,7 @@ def driving_google_req(start,stop):
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
 
-	driving_map = "https://www.google.com/maps/embed/v1/directions?key=" +key+ "&origin=" +str(start)+ "&destination="+str(stop)
+	driving_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop)
 	return coord, data, driving_map
 	
 
@@ -122,14 +123,9 @@ def calc_transit(start, stop, key, fare_info, travelers):
 	print ("instructions ", instructions)
 	print("transit: ", transit)
 
-	return [int(duration/60), cost*travelers, instructions] #["Total cost: $" + str(int(cost*travlers)), transit]
+	transit_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=transit'
 
-def divy():
-	url = 'http://www.divvybikes.com/stations/json/stations'
-	r = req.get(url)
-	data = r.json()
-
-	print data['stationBeanList'][0]
+	return [int(duration/60), cost*travelers, instructions], transit_map #["Total cost: $" + str(int(cost*travlers)), transit]
 
 def calc_transit_cost(transit, fare_info):
 	
@@ -145,7 +141,7 @@ def master(start, stop, travelers):
 	fare_info = read_fare_info("menu/IL_taxi.json")
 	#fare_info = read_fare_info("IL_taxi.json")
 
-	coord, data, driving_map = driving_google_req(start,stop)
+	coord, data, fare_compare['driving_map'] = driving_google_req(start,stop)
 	#fare_compare['taxi'] = calc_cab_fare(file_name, mile, num_pass, data, fare_info)
 
 	#ub_est = calc_uber_price_time(start, stop, key, uber_key, data)
@@ -154,10 +150,10 @@ def master(start, stop, travelers):
 	fare_compare['taxi'] = [5,3]
 	
 	#transit = calc_transit(start, stop, key, fare_info, travlers)
-	fare_compare['public'] = calc_transit(start, stop, key, fare_info, travelers)
+	fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, key, fare_info, travelers)
 	
 	#print(transit)
-	return fare_compare, driving_map
+	return fare_compare
 
 #testing("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
 fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
