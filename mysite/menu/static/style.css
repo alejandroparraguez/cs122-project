@@ -1,0 +1,57 @@
+#drivingLeft{
+    background: white;
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 50px;
+	max-width: 600px;	        
+    float: left;
+    align-content:center;
+}
+#taxi{
+    background: white;
+    margin: auto;
+    margin-right: 20px;
+	margin-left: 0px;	  
+    float: left;
+    align-content: space-around;
+}
+
+#DrivingMap{
+	border: 1px solid #000000;
+    background: white;
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 0px;
+	margin-top: 25px;	  
+    float: left;
+    align-content: flex-end;
+}
+
+#Uber{
+    background: white;
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 70px;
+    float: left;
+    align-content: space-around;
+}
+#textRightMid{
+    background: white;
+    margin: auto;
+    margin-right: 25px;
+	margin-left: 50px;
+	max-width: 600px;
+    float: left;
+    align-content: center;
+}
+
+#TransitMap{
+	border: 1px solid #000000;
+    background: white;
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 0px;
+	margin-top: 65px;	  
+    float: left;
+    align-content: flex-end;
+}

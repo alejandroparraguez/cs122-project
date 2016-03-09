@@ -1,5 +1,6 @@
 from django import forms
 import datetime
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 class infoForm(forms.Form):
