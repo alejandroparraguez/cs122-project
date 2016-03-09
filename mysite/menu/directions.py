@@ -61,7 +61,7 @@ def calc_route(num_pass, data, fare_info, mode):
 	miles = meters * 0.00062137
 	
 	fare = 0
-	if mode == 'taxi':
+	if mode == 'driving':
 		base = float(fare_info[mode]['base_fare'])
 		per_mile = float(fare_info[mode]["per_mile"])
 		per_min = float(fare_info[mode]["per_min"])
@@ -202,7 +202,7 @@ def master(start, stop, travelers):
 
 	fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
 
-	print(fare_compare['taxi'][2][0]))
+	#print(fare_compare['taxi'][2][0]))
 
 	return fare_compare
 

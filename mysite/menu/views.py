@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 
 #from .models import choiceQuestion, addressQuestion
 
-from directions import master
+from .directions import *
 from .forms import infoForm
 
 #fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
