@@ -137,10 +137,8 @@ def calc_transit(start, stop, key, fare_info, travelers):
 
 	transit_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=transit'
 
-<<<<<<< HEAD
-=======
 	return [int(duration/60), cost*travelers, instructions], transit_map #["Total cost: $" + str(int(cost*travlers)), transit]
->>>>>>> d7dd525d23a112fbc71c491b7c48f2ad13b44ea6
+
 
 def calc_transit_cost(transit, fare_info):
 	
