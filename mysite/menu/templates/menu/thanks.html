@@ -2,82 +2,89 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href ="menu/templates/menu/style.css">
+        <link href ="{% static 'style.css' %}" rel="stylesheet"  type="text/css">
         <h1>Welcome to Fare Compare Results!</h1>
     </head>
 
 <body>
-    <div id = textLeft>
-        <span style="textLeft">
-        <h2>Taxi:</h2>
-        <table class="Taxi"; border=1px>
-            <tr>
-                <th> Time </th>
-                <th> Cost </th>
-            </tr>
-            <tr>
-                {% for entry in taxi %}
-                    <td>{{ entry }}</td>
-                {% endfor %}
-            </tr>   
-            <tr>  </tr>             
-        </table> 
-        </span> 
-    </div> 
-
-    <div id=textLeftMid>  
-    
-        <h2>Uber:</h2>
-        <table class="Uber"; border=1px>
-            <tr>
-                <th> Service </th>
-                <th> Time </th>
-                <th> Cost </th>
-            </tr>
-            {% for service, value in uber.items %}
+    <div id="drivingLeft">
+        
+        <div id="taxi">
+            <h2>Taxi:</h2>
+            <table class="Taxi"; border=1px>
                 <tr>
-                    <td>{{ service }}</td>
-                    {% for entry in value %}
+                    <th> Time </th>
+                    <th> Cost </th>
+                </tr>
+                <tr>
+                    {% for entry in taxi %}
                         <td>{{ entry }}</td>
                     {% endfor %}
+                </tr>   
+                <tr>  </tr>             
+            </table> 
+        </div>
+      
+
+        
+        <div id = "Uber">
+            <h2>Uber:</h2>
+            <table class="Uber"; border=1px>
+                <tr>
+                    <th> Service </th>
+                    <th> Time </th>
+                    <th> Cost </th>
                 </tr>
-            {% endfor %}             
+                {% for service, value in uber.items %}
+                    <tr>
+                        <td>{{ service }}</td>
+                        {% for entry in value %}
+                            <td>{{ entry }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}             
+            </table>
+        </div>
+      
+        <div id = "DrivingMap" >
+            <iframe
+            width="600"
+            height="350"
+            frameborder="0" style="border:10"
+            src="{{driving_map}}" allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+
+    <div id=textRightMid>
+        <h2>Public Transport:</h2>
+        <table class="Public"; border=1px>
+            <tr>
+                <th> Time </th>
+                <th> Cost </th>
+            </tr>
+            <tr>
+                <td>{{ public.0 }}</td>
+                <td>{{ public.1 }}</td>
+            </tr>                
         </table>
+        <p>
+            <b>Directions: </b> <br>
+            {% for line in public.2 %}
+                {{line}} <br>
+            {% endfor %}
+        </p>
+
+        <div id = "TransitMap" >
+            <iframe
+            width="600"
+            height="350"
+            frameborder="0" style="border:0"
+            src="{{transit_map}}" allowfullscreen>
+            </iframe>
+        </div>
     </div>
-
-    <div id=mapLeft>
-        <iframe
-        width="450"
-        height="250"
-        frameborder="0" style="border:0"
-        src="{{driving_map}}" allowfullscreen>
-        </iframe>
-    </div>
-
-    <h2>Public Transport:</h2>
-    <table class="Public"; border=1px>
-        <tr>
-            <th> Time </th>
-            <th> Cost </th>
-        </tr>
-        <tr>
-            <td>{{ public.0 }}</td>
-            <td>{{ public.1 }}</td>
-        </tr>                
-    </table>
-    <p>
-        <b>Directions: </b> <br>
-        {% for line in public.2 %}
-            {{line}} <br>
-        {% endfor %}
-    </p>
-
-    <iframe
-    width="450"
-    height="250"
-    frameborder="0" style="border:0"
-    src="{{transit_map}}" allowfullscreen>
-    </iframe>
 
 </body>
 </html>

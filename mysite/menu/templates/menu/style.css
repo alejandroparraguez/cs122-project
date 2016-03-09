@@ -1,13 +1,13 @@
 .textLeft{
-    background: red
-    width = 100px
-    height = 300 px
-    float: left
+    background: red;
+    width = 100px;
+    height = 300 px;
+    float: left;
 }
 
 .textLeftMid{
-    background: blue
-    width = 100px
-    height = 300 px
-    float: left
+    background: blue;
+    width = 100px;
+    height = 300 px;
+    float: left;
 }
