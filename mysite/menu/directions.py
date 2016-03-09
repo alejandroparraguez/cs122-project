@@ -14,7 +14,7 @@ def read_fare_info(file_name):
 
 def google_req(start, stop, mode):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
-	print(url)
+	#print(url)
 	r = req.get(url)
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
@@ -104,12 +104,12 @@ def calc_divvy(start, stop, num_pass, fare_info):
 	coord4, data4, walk2_map = google_req(str(coord3[2])+','+str(coord3[3]), str(coord3[0])+','+str(coord3[1]), "walking")
 	#print("coord 4", coord4)
 	[t3, c3, i3] = calc_route(num_pass, data4, None, 'walking')
-	print("walk 1", [t1, c1, i1])
-	print("walk 2", [t3, c3, i3])
+	#print("walk 1", [t1, c1, i1])
+	#print("walk 2", [t3, c3, i3])
 
 	bike_coord, bike_data, bike_map = google_req(str(coord1[2])+','+str(coord1[3]), str(coord4[0])+','+str(coord4[1]), "biking")
 	[bike_t, bike_c, bike_i] = calc_route(num_pass, bike_data, fare_info, 'biking')
-	print("bike", [bike_t, bike_c, bike_i])
+	#print("bike", [bike_t, bike_c, bike_i])
 
 	total_t = t1 + t3 + bike_t
 
@@ -188,8 +188,8 @@ def master(start, stop, travelers):
 
 	fare_compare = {}
 	map_urls = []
-	#fare_info = read_fare_info("menu/IL_taxi.json")
-	fare_info = read_fare_info("IL_taxi.json")
+	fare_info = read_fare_info("menu/IL_taxi.json")
+	#fare_info = read_fare_info("IL_taxi.json")
 
 	coord, driving_data, fare_compare['driving_map'] = google_req(start, stop, 'driving')
 	fare_compare['taxi'] = calc_route(travelers, driving_data, fare_info, 'driving')
@@ -202,6 +202,8 @@ def master(start, stop, travelers):
 
 	fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
 
+	print(fare_compare['taxi'][2][0]))
+
 	return fare_compare
 
-print(master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5))
+#print("results: ", master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5).keys())
