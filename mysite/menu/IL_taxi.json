@@ -2,7 +2,7 @@
 	"taxi": {
 		"base_fare": "3.25",
 		"per_mile": "2.25",
-		"per_min": "100/3",
+		"per_min": "0.33",
 		"first_passenger": "1.00",
 		"additional_passenger": "0.50",
 		"clean_fee": "50.00",
@@ -13,5 +13,12 @@
 		"BUS": 2.25,
 		"SUBWAY": 3,
 		"HEAVY_RAIL": 5
+	},
+
+	"divvy":{
+		"base_fare": "9.95",
+		"second_thirty":"2.00",
+		"third_thirty":"6.00",
+		"next_thirty":"8.00"
 	}
 }

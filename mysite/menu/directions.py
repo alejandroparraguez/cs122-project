@@ -1,9 +1,7 @@
 import requests as req
 import json
-
-#start = "5413 South Woodlawn Avenue, Chicago"
-#stop = "Midway International Airport, Chicago"#
-#stop = "Art Institute of Chicago"
+import pprint
+import math
 
 key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
@@ -14,18 +12,18 @@ def read_fare_info(file_name):
 		fare_info = json.load(data_file)
 	return fare_info
 
-def driving_google_req(start,stop):
-	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&key=' + key
+def google_req(start, stop, mode):
+	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
+	print(url)
 	r = req.get(url)
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
 
-	driving_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop)
-	return coord, data, driving_map
+	embed_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=' +mode
+	return coord, data, embed_map
 	
 
 def start_end_coord(start, stop, key, data):
-	
 	#Start coordinates
 	route0 = data['routes'][0]
 	leg0 = route0['legs'][0]
@@ -46,36 +44,108 @@ def start_end_coord(start, stop, key, data):
 	
 	return [start_lat, start_long, end_lat, end_long]
 
-def calc_cab_fare(mile, num_pass, data, fare_info):
+def calc_route(num_pass, data, fare_info, mode):
 	
-	sec = 0
 	meters = 0
-	for route in data['routes']:
-		leg = route['leg']
-		duration = leg['duration']
-		distance = leg['distance']
-		
-		sec += duration['value']
-		meters += duration['value']
+	#pprint.pprint(data['routes'][0]['legs'][0])
+	time = data['routes'][0]['legs'][0]['duration']['text']
+	sec = data['routes'][0]['legs'][0]['duration']['value']
+	minutes = sec/60
+	
+	instructions = []
+	for step in data['routes'][0]['legs'][0]['steps']:
+		#pprint.pprint(step['html_instructions'])
+		instructions.append(step['html_instructions'])
+		meters += step['distance']['value']
 
-	minutes = float(sec)/60.00
 	miles = meters * 0.00062137
 	
-	base_fare = fare_info['base_fare']
-	per_mile = fare_info["per_mile"]
-	per_min = fare_info["per_min"]
-	first_passenger = fare_info["first_passenger"]
-	add_passenger = fare_info["additional_passenger"]
-	clean_fee = fare_info["clean_fee"]
-	airport_tax = fare_info["airport_tax"]
+	fare = 0
+	if mode == 'taxi':
+		base = float(fare_info[mode]['base_fare'])
+		per_mile = float(fare_info[mode]["per_mile"])
+		per_min = float(fare_info[mode]["per_min"])
+		first_passenger = float(fare_info[mode]["first_passenger"])
+		add_passenger = float(fare_info[mode]["additional_passenger"])
+
+		if num_pass > 1:
+			pass_fare = first_passenger + add_passenger * (num_pass - 1)
+		else:
+			pass_fare = 0
+
+		fare = base + (per_mile * miles) + (per_min * minutes) + pass_fare
 	
-	if num_pass > 1:
-		pass_fare = first_passenger + add_passenger * (num_pass - 1)
-	else:
-		pass_fare = 0
+	if mode == 'biking':
+		fare = float(fare_info['divvy']['base_fare'])
+		second_thirty = float(fare_info['divvy']['second_thirty'])
+		third_thirty = float(fare_info['divvy']['third_thirty'])
+		next_thirty = float(fare_info['divvy']['next_thirty'])
+		time_chunks = math.ceil(minutes / 30)
+		if time_chunks > 1:
+			fare += second_thirty
+		if time_chunks > 2:
+			fare += third_thirty
+		if time_chunks > 3:
+			fare += (time_chunks - 3) * next_thirty
+		fare = fare * num_pass
+
+	return [int(minutes), fare, instructions]
 	
-	return base + (per_mile * mile) + (per_min * minutes) + pass_fare
+def calc_divvy(start, stop, num_pass, fare_info):
+
+	coord3, data3, map3 = google_req(stop, "divvy station", "walking")
+	#print("coord 3", coord3)
+	coord1, data1, walk1_map = google_req(start, "divvy station", "walking")
+	#print("coord 1", coord1)
+	[t1, c1, i1] = calc_route(num_pass, data1, None, 'walking')
+	#print("walk 1", [t1, c1, i1])
+
 	
+	coord4, data4, walk2_map = google_req(str(coord3[2])+','+str(coord3[3]), str(coord3[0])+','+str(coord3[1]), "walking")
+	#print("coord 4", coord4)
+	[t3, c3, i3] = calc_route(num_pass, data4, None, 'walking')
+	print("walk 1", [t1, c1, i1])
+	print("walk 2", [t3, c3, i3])
+
+	bike_coord, bike_data, bike_map = google_req(str(coord1[2])+','+str(coord1[3]), str(coord4[0])+','+str(coord4[1]), "biking")
+	[bike_t, bike_c, bike_i] = calc_route(num_pass, bike_data, fare_info, 'biking')
+	print("bike", [bike_t, bike_c, bike_i])
+
+	total_t = t1 + t3 + bike_t
+
+	return [total_t, bike_c, i1 + bike_i + i3], bike_map, walk1_map, walk2_map
+
+
+
+def calc_transit(start, stop, fare_info, travelers, mode):
+	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" +str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
+	r = req.get(url)
+	data = r.json()
+
+	duration_text = data['routes'][0]['legs'][0]['duration']['text']
+	duration = data['routes'][0]['legs'][0]['duration']['value']
+	
+	instructions = []
+	transit = []
+	for leg in data['routes'][0]['legs'][0]['steps']:
+		instructions.append(leg['html_instructions'])
+		if 'transit_details' in leg.keys():
+			transit.append(leg['transit_details']['line']['vehicle']['type'])
+
+	cost = calc_transit_cost(transit, fare_info)
+
+	transit_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=transit'
+
+	return [int(duration/60), cost*travelers, instructions], transit_map 
+
+
+def calc_transit_cost(transit, fare_info):
+	
+	total_cost = 0.0
+	for vehicle in transit:
+		total_cost = total_cost + float(fare_info['transit'][vehicle])
+	return total_cost
+
 
 def calc_uber(crd, ub_key, passengers):
 	url = 'https://api.uber.com/v1/estimates/price'
@@ -113,69 +183,25 @@ def calc_uber(crd, ub_key, passengers):
 
 	return uber_estimates	
 
-def calc_transit(start, stop, key, fare_info, travelers):
-	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start) + '&destination=' + str(stop) + '&mode=transit&transit_routing_preference=fewer_transfers' + '&key=' + key
-	print(url)
-	r = req.get(url)
-	data = r.json()
-
-	#print("data before: ", data['routes'])
-	duration_text = data['routes'][0]['legs'][0]['duration']['text']
-	#print("duration after: ", duration_text)
-	duration = data['routes'][0]['legs'][0]['duration']['value']
-	print("duration: ", duration_text, duration/60)
-	instructions = []
-	transit = []
-	for leg in data['routes'][0]['legs'][0]['steps']:
-		instructions.append(leg['html_instructions'])
-		if 'transit_details' in leg.keys():
-			transit.append(leg['transit_details']['line']['vehicle']['type'])
-	cost = calc_transit_cost(transit, fare_info)
-
-	print ("instructions ", instructions)
-	print("transit: ", transit)
-
-	transit_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=transit'
-
-	return [int(duration/60), cost*travelers, instructions], transit_map #["Total cost: $" + str(int(cost*travlers)), transit]
-
-
-def calc_transit_cost(transit, fare_info):
-	
-	total_cost = 0.0
-	for vehicle in transit:
-		total_cost = total_cost + float(fare_info['transit'][vehicle])
-	return total_cost
 
 def master(start, stop, travelers):
 
 	fare_compare = {}
 	map_urls = []
-	fare_info = read_fare_info("menu/IL_taxi.json")
-	#fare_info = read_fare_info("IL_taxi.json")
+	#fare_info = read_fare_info("menu/IL_taxi.json")
+	fare_info = read_fare_info("IL_taxi.json")
 
-	coord, data, fare_compare['driving_map'] = driving_google_req(start,stop)
-	#fare_compare['taxi'] = calc_cab_fare(file_name, mile, num_pass, data, fare_info)
+	coord, driving_data, fare_compare['driving_map'] = google_req(start, stop, 'driving')
+	fare_compare['taxi'] = calc_route(travelers, driving_data, fare_info, 'driving')
 
-	#ub_est = calc_uber_price_time(start, stop, key, uber_key, data)
-	fare_compare['uber'] = calc_uber(coord, uber_key,travelers)
-	#fare_compare['uber'] = {'uberX':[4, 6], 'uberXL':[5, 7]}
-	fare_compare['taxi'] = [5,3]
+	fare_compare['uber'] = calc_uber(coord, uber_key, travelers)
 	
-	#transit = calc_transit(start, stop, key, fare_info, travlers)
-	fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, key, fare_info, travelers)
-	
-	#print(transit)
+	public = 'transit&transit_routing_preference=fewer_transfers'
+	fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, fare_info, travelers, public)
+	#fare_compare['public'], fare_compare['transit_map'] = 
+
+	fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
+
 	return fare_compare
 
-#testing("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
-fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
-
-'''
-if __name__ == "__main__":
-	fare_info = read_fare_info("IL_taxi.json")
-	#calc_transit(start, stop, key, fare_info, 2)
-	divy()
-'''
-c,d, dm = driving_google_req('5433 South University Avenue, Chicago','Millenium Park, Chicago')
-c_uber = calc_uber(c, uber_key,5)
+print(master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5))
