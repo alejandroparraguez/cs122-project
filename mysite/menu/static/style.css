@@ -35,7 +35,8 @@
     float: left;
     align-content: space-around;
 }
-#textRightMid{
+
+#PublicTrans{
     background: white;
     margin: auto;
     margin-right: 25px;
@@ -52,6 +53,27 @@
     margin-right: 0px;
 	margin-left: 0px;
 	margin-top: 65px;	  
+    float: left;
+    align-content: flex-end;
+}
+
+#DivvyBikes{
+    background: white;
+    margin: auto;
+    margin-right: 25px;
+    margin-left: 50px;
+    max-width: 600px;
+    float: left;
+    align-content: center;
+}
+
+#BikeMap{
+    border: 1px solid #000000;
+    background: white;
+    margin: auto;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-top: 65px;     
     float: left;
     align-content: flex-end;
 }

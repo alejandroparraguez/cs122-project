@@ -207,3 +207,5 @@ def master(start, stop, travelers):
 	return fare_compare
 
 #print("results: ", master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5).keys())
+mas = master("5433 South University Avenue, Chicago", "Art Institute,Chicago",5)
+print(mas["divvy"])
