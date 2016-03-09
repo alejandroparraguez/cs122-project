@@ -76,7 +76,7 @@ def calc_cab_fare(mile, num_pass, data, fare_info):
 	return base + (per_mile * mile) + (per_min * minutes) + pass_fare
 	
 
-def calc_uber(crd, ub_key):
+def calc_uber(crd, ub_key, passengers):
 	url = 'https://api.uber.com/v1/estimates/price'
 
 	parameters = {
@@ -90,13 +90,25 @@ def calc_uber(crd, ub_key):
 	response = req.get(url, params=parameters)
 	ub_data = response.json()
 
-	uber_estimates = {}
+	pass_less_5 = ['UberBLACK','uberX','uberESPANOL','UberSELECT']
 
-	for dicti in ub_data['prices']:
-		est_key = dicti["display_name"]
-		price = dicti["estimate"]
-		length = dicti["duration"]
-		uber_estimates[est_key] = [length/60, price]
+
+	uber_estimates = {}
+	if passengers > 4:
+		for dicti in ub_data['prices']:
+			est_key = dicti["display_name"]
+			price = dicti["estimate"]
+			length = dicti["duration"]
+			if est_key in pass_less_5:
+				pass	
+			else:
+				uber_estimates[est_key] = [length/60, price]
+	else:
+		for dicti in ub_data['prices']:
+			est_key = dicti["display_name"]
+			price = dicti["estimate"]
+			length = dicti["duration"]
+			uber_estimates[est_key] = [length/60, price]
 
 	return uber_estimates	
 
@@ -124,12 +136,6 @@ def calc_transit(start, stop, key, fare_info, travelers):
 
 	return [int(duration/60), cost*travelers, instructions] #["Total cost: $" + str(int(cost*travlers)), transit]
 
-def divy():
-	url = 'http://www.divvybikes.com/stations/json/stations'
-	r = req.get(url)
-	data = r.json()
-
-	print data['stationBeanList'][0]
 
 def calc_transit_cost(transit, fare_info):
 	
@@ -149,7 +155,7 @@ def master(start, stop, travelers):
 	#fare_compare['taxi'] = calc_cab_fare(file_name, mile, num_pass, data, fare_info)
 
 	#ub_est = calc_uber_price_time(start, stop, key, uber_key, data)
-	fare_compare['uber'] = calc_uber(coord, uber_key)
+	fare_compare['uber'] = calc_uber(coord, uber_key,travelers)
 	#fare_compare['uber'] = {'uberX':[4, 6], 'uberXL':[5, 7]}
 	fare_compare['taxi'] = [5,3]
 	
@@ -161,7 +167,12 @@ def master(start, stop, travelers):
 
 #testing("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
 fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
+
+'''
 if __name__ == "__main__":
 	fare_info = read_fare_info("IL_taxi.json")
 	#calc_transit(start, stop, key, fare_info, 2)
 	divy()
+'''
+c,d, dm = driving_google_req('5433 South University Avenue, Chicago','Millenium Park, Chicago')
+c_uber = calc_uber(c, uber_key,5)
