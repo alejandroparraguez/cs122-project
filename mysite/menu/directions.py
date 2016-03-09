@@ -62,11 +62,11 @@ def calc_route(num_pass, data, fare_info, mode):
 	
 	fare = 0
 	if mode == 'driving':
-		base = float(fare_info[mode]['base_fare'])
-		per_mile = float(fare_info[mode]["per_mile"])
-		per_min = float(fare_info[mode]["per_min"])
-		first_passenger = float(fare_info[mode]["first_passenger"])
-		add_passenger = float(fare_info[mode]["additional_passenger"])
+		base = float(fare_info['taxi']['base_fare'])
+		per_mile = float(fare_info['taxi']["per_mile"])
+		per_min = float(fare_info['taxi']["per_min"])
+		first_passenger = float(fare_info['taxi']["first_passenger"])
+		add_passenger = float(fare_info['taxi']["additional_passenger"])
 
 		if num_pass > 1:
 			pass_fare = first_passenger + add_passenger * (num_pass - 1)
@@ -89,7 +89,7 @@ def calc_route(num_pass, data, fare_info, mode):
 			fare += (time_chunks - 3) * next_thirty
 		fare = fare * num_pass
 
-	return [int(minutes), fare, instructions]
+	return [int(minutes), "{0:.2f}".format(round(fare,2))], instructions
 	
 def calc_divvy(start, stop, num_pass, fare_info):
 
@@ -97,23 +97,23 @@ def calc_divvy(start, stop, num_pass, fare_info):
 	#print("coord 3", coord3)
 	coord1, data1, walk1_map = google_req(start, "divvy station", "walking")
 	#print("coord 1", coord1)
-	[t1, c1, i1] = calc_route(num_pass, data1, None, 'walking')
+	[t1, c1], i1 = calc_route(num_pass, data1, None, 'walking')
 	#print("walk 1", [t1, c1, i1])
 
 	
 	coord4, data4, walk2_map = google_req(str(coord3[2])+','+str(coord3[3]), str(coord3[0])+','+str(coord3[1]), "walking")
 	#print("coord 4", coord4)
-	[t3, c3, i3] = calc_route(num_pass, data4, None, 'walking')
+	[t3, c3], i3 = calc_route(num_pass, data4, None, 'walking')
 	#print("walk 1", [t1, c1, i1])
 	#print("walk 2", [t3, c3, i3])
 
 	bike_coord, bike_data, bike_map = google_req(str(coord1[2])+','+str(coord1[3]), str(coord4[0])+','+str(coord4[1]), "biking")
-	[bike_t, bike_c, bike_i] = calc_route(num_pass, bike_data, fare_info, 'biking')
+	[bike_t, bike_c], bike_i = calc_route(num_pass, bike_data, fare_info, 'biking')
 	#print("bike", [bike_t, bike_c, bike_i])
 
 	total_t = t1 + t3 + bike_t
 
-	return [total_t, bike_c, i1 + bike_i + i3], bike_map, walk1_map, walk2_map
+	return [total_t, bike_c], i1 + bike_i + i3, bike_map, walk1_map, walk2_map
 
 
 
@@ -192,7 +192,7 @@ def master(start, stop, travelers):
 	#fare_info = read_fare_info("IL_taxi.json")
 
 	coord, driving_data, fare_compare['driving_map'] = google_req(start, stop, 'driving')
-	fare_compare['taxi'] = calc_route(travelers, driving_data, fare_info, 'driving')
+	fare_compare['taxi'], driving_i = calc_route(travelers, driving_data, fare_info, 'driving')
 
 	fare_compare['uber'] = calc_uber(coord, uber_key, travelers)
 	
@@ -200,8 +200,8 @@ def master(start, stop, travelers):
 	fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, fare_info, travelers, public)
 	#fare_compare['public'], fare_compare['transit_map'] = 
 
-	fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
-
+	fare_compare['divvy'], divvy_i, fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
+	print(fare_compare['divvy'], divvy_i)
 	#print(fare_compare['taxi'][2][0]))
 
 	return fare_compare
