@@ -8,6 +8,7 @@ key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
 map_key ='AIzaSyDrUubINuulSxDYp5rmG-NuvR-Zo_oLrmY'
 geocode_key = 'AIzaSyAiIUbZYNYCg7cuj73HxaXaSYJyeq_rFdM'
+city = "Chicago"
 
 def read_fare_info(file_name):
 	with open(file_name) as data_file:
@@ -59,7 +60,7 @@ def calc_route(num_pass, data, fare_info, mode):
 	for step in data['routes'][0]['legs'][0]['steps']:
 		instruction_step_html = BeautifulSoup(step['html_instructions'], 'html.parser')
 		instruction_step = instruction_step_html.get_text()
-		
+
 		instructions.append(instruction_step)
 		test_i.append(step['html_instructions'])
 		meters += step['distance']['value']
@@ -209,6 +210,8 @@ def calc_uber(crd, ub_key, passengers):
 
 
 def master(start, stop, travelers):
+	start = start + ' '+ city
+	stop = stop + ' ' + city
 
 	fare_compare = {}
 	map_urls = []

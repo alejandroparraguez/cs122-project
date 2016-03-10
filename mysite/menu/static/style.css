@@ -1,18 +1,23 @@
-.picture{
-    background-image:;
+body {
+    background-image: url("background.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    max-height: 2500px;
+    background-opacity:0.1;
 }
 
 #drivingLeft{
-    background: white;
+    background-color: #D1E4F5;
     margin: auto;
+    margin-top: 20px;
     margin-right: 0px;
 	margin-left: 50px;
-	max-width: 600px;	        
+	max-width: 600px;        
     float: left;
     align-content:center;
 }
+
 #taxi{
-    background: white;
     margin: auto;
     margin-right: 20px;
 	margin-left: 0px;	  
@@ -22,27 +27,26 @@
 
 #DrivingMap{
 	border: 1px solid #000000;
-    background: white;
     margin: auto;
     margin-right: 0px;
 	margin-left: 0px;
-	margin-top: 25px;	  
     float: left;
     align-content: flex-end;
 }
 
 #Uber{
-    background: white;
     margin: auto;
     margin-right: 0px;
 	margin-left: 70px;
+    margin-bottom: 20px;
     float: left;
     align-content: space-around;
 }
 
 #PublicTrans{
-    background: white;
+    background-color: #D1E4F5;
     margin: auto;
+    margin-top: 20px;
     margin-right: 25px;
 	margin-left: 50px;
 	max-width: 600px;
@@ -52,18 +56,18 @@
 
 #TransitMap{
 	border: 1px solid #000000;
-    background: white;
     margin: auto;
     margin-right: 0px;
 	margin-left: 0px;
-	margin-top: 65px;	  
+    margin-bottom: 20px;	  
     float: left;
     align-content: flex-end;
 }
 
 #DivvyBikes{
-    background: white;
+    background-color: #D1E4F5;
     margin: auto;
+    margin-top: 20px;
     margin-right: 25px;
     margin-left: 50px;
     max-width: 600px;
@@ -73,11 +77,20 @@
 
 #BikeMap{
     border: 1px solid #000000;
-    background: white;
     margin: auto;
     margin-right: 0px;
     margin-left: 0px;
-    margin-top: 65px;     
+    margin-bottom: 20px;
     float: left;
     align-content: flex-end;
+}
+
+#Welcome{
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    max-height: 3000px; 
+    margin: auto;      
+    margin-top: 500px;
+    margin-bottom: 1000px;
+    align-content:center;
 }

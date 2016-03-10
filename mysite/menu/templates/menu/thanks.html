@@ -2,11 +2,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link href ="{% static 'style.css' %}" rel="stylesheet"  type="text/css">
-        <h1>Welcome to Fare Compare Results!</h1>
+        <center>
+            <link href ="{% static 'style.css' %}" rel="stylesheet"  type="text/css">
+            <h1>Welcome to Fare Compare Results!</h1>
+        </center>
     </head>
 
-<body background="http://i1.trekearth.com/photos/83228/chicago-landscape.jpg">
+<body>
     
     <div id="drivingLeft">
         <div id = "DrivingMap" >
@@ -86,7 +88,7 @@
         <p>
             <b>Directions: </b> <br>
             {% for line in public.2 %}
-                {{line}} <br>
+                <li>{{line}}</li> <br>
             {% endfor %}
         </p>
     </div>
@@ -101,7 +103,7 @@
             src="{{bike_map}}" allowfullscreen>
             </iframe>
         </div>
-        
+
         <h2>Divvy Bikes:</h2>
         <table class="Divvy"; border=1px>
             <tr>
@@ -121,7 +123,7 @@
          <p>
             <b>Directions: </b> <br>
             {% for line in divvy.2 %}
-                {{line}} <br>
+                <li>{{line}}</li> <br>
             {% endfor %}
         </p>
     </div>

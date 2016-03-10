@@ -1,9 +1,19 @@
-
-<h1>Welcome to Fare Compare!</h1>
-
-
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form>
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<div id="Welcome">
+		<center>
+			<head>
+				<h1>Welcome to Fare Compare!</h1>
+		        <link href ="{% static 'style.css' %}" rel="stylesheet"  type="text/css">
+			</head>
+			<body>
+				<form method="post">
+				    {% csrf_token %}
+				    {{ form }}
+				    <input type="submit" value="Submit" />
+				</form>
+			</body>
+		</center>
+	</div>
+</html>
