@@ -19,7 +19,6 @@ def google_req(start, stop, mode):
 	print(url)
 	r = req.get(url)
 	data = r.json()
-	pprint.pprint(data)
 	coord = start_end_coord(start, stop, key, data)
 
 	embed_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=' +mode
@@ -55,10 +54,14 @@ def calc_route(num_pass, data, fare_info, mode):
 	minutes = sec/60
 	
 	instructions = []
+	test_i = []
+
 	for step in data['routes'][0]['legs'][0]['steps']:
-		#soup = BeautifulSoup(step['html_instructions'], 'html.parser')
-		#instruction_step_html = soup.
-		instructions.append(step['html_instructions'])
+		instruction_step_html = BeautifulSoup(step['html_instructions'], 'html.parser')
+		instruction_step = instruction_step_html.get_text()
+		
+		instructions.append(instruction_step)
+		test_i.append(step['html_instructions'])
 		meters += step['distance']['value']
 
 	miles = meters * 0.00062137
@@ -92,6 +95,11 @@ def calc_route(num_pass, data, fare_info, mode):
 			fare += (time_chunks - 3) * next_thirty
 		fare = fare * num_pass
 
+		print("instructions", instructions)
+		print('next step')
+		pprint.pprint(test_i)
+
+
 	return [int(minutes), "{0:.2f}".format(round(fare,2)), instructions]
 	
 def nearest_divvy(place):
@@ -105,16 +113,14 @@ def nearest_divvy(place):
 	first_station_url = divvy_url+ '&lat=' +str(start_lat)+ '&lon=' +str(start_long)+ '&max_stations=1'
 	r = req.get(first_station_url)
 	station_data = r.json()
-	pprint.pprint(station_data)
 	coord = station_data[0]['geometry']['coordinates']
 	return coord
 
 def calc_divvy(start, stop, num_pass, fare_info):
 
 	divvy1 = nearest_divvy(start)
-	#print("divvy1", divvy1)
 	divvy1_loc = str(divvy1[1])+','+str(divvy1[0])
-	#print("divvy1_loc", divvy1_loc)
+	
 	divvy2 = nearest_divvy(stop)
 	divvy2_loc = str(divvy2[1])+','+str(divvy2[0])
 
@@ -122,12 +128,15 @@ def calc_divvy(start, stop, num_pass, fare_info):
 	[t1, c1, i1] = calc_route(num_pass, data1, None, 'walking')
 
 	bike_coord, bike_data, bike_map = google_req(divvy1_loc, divvy2_loc, "bicycling")
+	print(divvy1)
+	print(divvy2)
 	[bike_t, bike_c, bike_i] = calc_route(num_pass, bike_data, fare_info, 'bicycling')
 
 	coord3, data3, walk2_map = google_req(divvy2_loc, stop, "walking")
 	[t3, c3, i3] = calc_route(num_pass, data3, None, 'walking')
 
 	total_t = t1 + t3 + bike_t
+	#print(i1 + bike_i + i3)
 
 	return [total_t, bike_c, i1 + bike_i + i3], bike_map, walk1_map, walk2_map
 

@@ -7,8 +7,17 @@
     </head>
 
 <body background="http://i1.trekearth.com/photos/83228/chicago-landscape.jpg">
+    
     <div id="drivingLeft">
-        
+        <div id = "DrivingMap" >
+            <iframe
+            width="600"
+            height="350"
+            frameborder="0" style="border:10"
+            src="{{driving_map}}" allowfullscreen>
+            </iframe>
+        </div>
+
         <div id="taxi">
             <h2>Taxi:</h2>
             <table class="Taxi"; border=1px>
@@ -45,18 +54,20 @@
             </table>
         </div>
       
-        <div id = "DrivingMap" >
-            <iframe
-            width="600"
-            height="350"
-            frameborder="0" style="border:10"
-            src="{{driving_map}}" allowfullscreen>
-            </iframe>
-        </div>
+        
     </div>
 
 
     <div id='PublicTrans'>
+        <div id = "TransitMap" >
+            <iframe
+            width="600"
+            height="350"
+            frameborder="0" style="border:0"
+            src="{{transit_map}}" allowfullscreen>
+            </iframe>
+        </div>
+
         <h2>Public Transport:</h2>
         <table class="Public"; border=1px>
             <tr>
@@ -68,25 +79,29 @@
                 <td>{{ public.1 }}</td>
             </tr>                
         </table>
+        
+
+        
+
         <p>
             <b>Directions: </b> <br>
             {% for line in public.2 %}
                 {{line}} <br>
             {% endfor %}
         </p>
-
-        <div id = "TransitMap" >
-            <iframe
-            width="600"
-            height="350"
-            frameborder="0" style="border:0"
-            src="{{transit_map}}" allowfullscreen>
-            </iframe>
-        </div>
     </div>
 
 
     <div id='DivvyBikes'>
+        <div id = "BikeMap" >
+            <iframe
+            width="600"
+            height="350"
+            frameborder="0" style="border:0"
+            src="{{bike_map}}" allowfullscreen>
+            </iframe>
+        </div>
+        
         <h2>Divvy Bikes:</h2>
         <table class="Divvy"; border=1px>
             <tr>
@@ -99,21 +114,16 @@
             </tr>                
         </table>
        
-       <p>
+      
+
+        
+
+         <p>
             <b>Directions: </b> <br>
             {% for line in divvy.2 %}
                 {{line}} <br>
             {% endfor %}
         </p>
-
-        <div id = "BikeMap" >
-            <iframe
-            width="600"
-            height="350"
-            frameborder="0" style="border:0"
-            src="{{bike_map}}" allowfullscreen>
-            </iframe>
-        </div>
     </div>
 
 </body>
