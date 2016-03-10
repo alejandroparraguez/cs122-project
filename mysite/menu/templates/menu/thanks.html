@@ -17,9 +17,8 @@
                     <th> Cost </th>
                 </tr>
                 <tr>
-                    {% for entry in taxi %}
-                        <td>{{ entry }}</td>
-                    {% endfor %}
+                    <td>{{ taxi.0 }}</td>
+                    <td>{{ taxi.1 }}</td>
                 </tr>   
                 <tr>  </tr>             
             </table> 
@@ -100,6 +99,13 @@
             </tr>                
         </table>
        
+       <p>
+            <b>Directions: </b> <br>
+            {% for line in divvy.2 %}
+                {{line}} <br>
+            {% endfor %}
+        </p>
+
         <div id = "BikeMap" >
             <iframe
             width="600"
