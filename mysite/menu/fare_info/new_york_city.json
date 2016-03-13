@@ -4,7 +4,7 @@
         "per_mile": "2.50",
         "per_min": "0.50",
         "first_passenger": "0",
-        "additional_passenger": "0",
+        "additional_passenger": "0"
     },
 
     "transit": {

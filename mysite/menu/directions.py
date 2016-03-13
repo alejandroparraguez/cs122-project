@@ -57,9 +57,11 @@ def calc_route(num_pass, data, fare_info, mode):
 	test_i = []
 
 	for step in data['routes'][0]['legs'][0]['steps']:
-		instruction_step_html = BeautifulSoup(step['html_instructions'], 'html.parser')
-		instruction_step = instruction_step_html.get_text()
 
+		soup = BeautifulSoup(step['html_instructions'], 'html.parser')
+		for div in soup.find_all("div", style=True):
+			div.extract()
+		instruction_step = soup.get_text()
 		instructions.append(instruction_step)
 		test_i.append(step['html_instructions'])
 		meters += step['distance']['value']
