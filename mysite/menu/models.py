@@ -16,6 +16,16 @@ class choiceQuestion(models.Model):
 	def __str__(self):
 		return self.question_text
 
+class cityQuestion(models.Model):
+	city_choices = (("chicago", u'Chicago'),
+					("new_york", u'New York'),
+					("san_francisco", u'San Francisco'))
+	question_text = models.CharField(max_length=200)
+	
+
+	def __str__(self):
+			return self.question_text
+
 class Response(models.Model):
 	question = models.ForeignKey(choiceQuestion, on_delete=models.CASCADE)
 	response_text = models.CharField(max_length=200)

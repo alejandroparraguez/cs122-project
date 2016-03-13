@@ -1,0 +1,15 @@
+{
+    "taxi": {
+        "base_fare": "3.25",
+        "per_mile": "2.25",
+        "per_min": "0.33",
+        "first_passenger": "1.00",
+        "additional_passenger": "0.50",
+    },
+
+    "transit": {
+        "BUS": 2.25,
+        "SUBWAY": 3,
+        "HEAVY_RAIL": 5
+    }
+}

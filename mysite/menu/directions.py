@@ -8,7 +8,6 @@ key = 'AIzaSyByDOFQN5iEuGMIKF7mO9f79_GqO6ZWM1s'
 uber_key = 'NtbAU8JtNKJKqs8IEskwOfBq_pWZvKq0y6bXGLcf'
 map_key ='AIzaSyDrUubINuulSxDYp5rmG-NuvR-Zo_oLrmY'
 geocode_key = 'AIzaSyAiIUbZYNYCg7cuj73HxaXaSYJyeq_rFdM'
-city = "Chicago"
 
 def read_fare_info(file_name):
 	with open(file_name) as data_file:
@@ -17,7 +16,7 @@ def read_fare_info(file_name):
 
 def google_req(start, stop, mode):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
-	print(url)
+	#print(url)
 	r = req.get(url)
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
@@ -81,6 +80,9 @@ def calc_route(num_pass, data, fare_info, mode):
 			pass_fare = 0
 
 		fare = base + (per_mile * miles) + (per_min * minutes) + pass_fare
+
+		#if "airport" in start or stop:
+		#	fare += float(fare_info['taxi'][])
 	
 	if mode == 'bicycling':
 		fare = float(fare_info['divvy']['base_fare'])
@@ -96,9 +98,9 @@ def calc_route(num_pass, data, fare_info, mode):
 			fare += (time_chunks - 3) * next_thirty
 		fare = fare * num_pass
 
-		print("instructions", instructions)
-		print('next step')
-		pprint.pprint(test_i)
+		#print("instructions", instructions)
+		#print('next step')
+		#pprint.pprint(test_i)
 
 
 	return [int(minutes), "{0:.2f}".format(round(fare,2)), instructions]
@@ -129,8 +131,8 @@ def calc_divvy(start, stop, num_pass, fare_info):
 	[t1, c1, i1] = calc_route(num_pass, data1, None, 'walking')
 
 	bike_coord, bike_data, bike_map = google_req(divvy1_loc, divvy2_loc, "bicycling")
-	print(divvy1)
-	print(divvy2)
+	#print(divvy1)
+	#print(divvy2)
 	[bike_t, bike_c, bike_i] = calc_route(num_pass, bike_data, fare_info, 'bicycling')
 
 	coord3, data3, walk2_map = google_req(divvy2_loc, stop, "walking")
@@ -209,13 +211,14 @@ def calc_uber(crd, ub_key, passengers):
 	return uber_estimates	
 
 
-def master(start, stop, travelers):
-	start = start + ' '+ city
-	stop = stop + ' ' + city
-
+def master(start, stop, travelers, city):
+	start = start + ' '+ city.replace("_", " ")
+	stop = stop + ' ' + city.replace("_", " ")
+	print(start)
 	fare_compare = {}
 	map_urls = []
-	fare_info = read_fare_info("menu/IL_taxi.json")
+	print("menu/fare_info/"+city+".json")
+	fare_info = read_fare_info("menu/fare_info/"+city+".json")
 	#fare_info = read_fare_info("IL_taxi.json")
 
 	coord, driving_data, fare_compare['driving_map'] = google_req(start, stop, 'driving')
@@ -227,10 +230,11 @@ def master(start, stop, travelers):
 	fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, fare_info, travelers, public)
 	#fare_compare['public'], fare_compare['transit_map'] = 
 
-	fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
+	if city == "chicago":
+		fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
 	#print(fare_compare['divvy'], divvy_i)
 	#print(fare_compare['taxi'][2][0]))
 
 	return fare_compare
 
-master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
+#master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)

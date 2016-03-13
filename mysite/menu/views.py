@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 
 #from .models import choiceQuestion, addressQuestion
 
-from .directions import *
+from .directions import master
 from .forms import infoForm
 
 #fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
@@ -14,12 +14,12 @@ from .forms import infoForm
 def get_travel_info(request):
 	if request.method == 'POST':
 		form = infoForm(request.POST)
-		print('HERE!')
 		if form.is_valid():
 			passengers = form.cleaned_data['passengers']
 			start_address = form.cleaned_data['startAddress']
 			end_address = form.cleaned_data['endAddress']
-			backend = master(start_address, end_address, passengers)
+			city = form.cleaned_data['city']
+			backend = master(start_address, end_address, passengers, city)
 
 			#context['backend'] = backend
 			#print(start_address)
