@@ -55,6 +55,7 @@ def calc_route(num_pass, data, fare_info, mode):
 	
 	instructions = []
 	test_i = []
+	transit = []
 
 	for step in data['routes'][0]['legs'][0]['steps']:
 
@@ -65,6 +66,8 @@ def calc_route(num_pass, data, fare_info, mode):
 		instructions.append(instruction_step)
 		test_i.append(step['html_instructions'])
 		meters += step['distance']['value']
+		if mode[0:7] == 'transit' and 'transit_details' in step.keys():
+			transit.append (step['transit_details']['line']['vehicle']['type'])
 
 	miles = meters * 0.00062137
 	
@@ -83,9 +86,6 @@ def calc_route(num_pass, data, fare_info, mode):
 
 		fare = base + (per_mile * miles) + (per_min * minutes) + pass_fare
 
-		#if "airport" in start or stop:
-		#	fare += float(fare_info['taxi'][])
-	
 	if mode == 'bicycling':
 		fare = float(fare_info['divvy']['base_fare'])
 		second_thirty = float(fare_info['divvy']['second_thirty'])
@@ -100,12 +100,13 @@ def calc_route(num_pass, data, fare_info, mode):
 			fare += (time_chunks - 3) * next_thirty
 		fare = fare * num_pass
 
-		#print("instructions", instructions)
-		#print('next step')
-		#pprint.pprint(test_i)
+	if mode[0:7] == 'transit':
+		for vehicle in transit:
+			fare = fare + float(fare_info['transit'][vehicle])
+		print(transit)
+		fare = fare * num_pass
 
-
-	return [int(minutes), "{0:.2f}".format(round(fare,2)), instructions]
+	return [str(int(minutes)), "{0:.2f}".format(round(fare,2)), instructions]
 	
 def nearest_divvy(place):
 	google_url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+str(place)+'&key=' +str(geocode_key)
@@ -133,19 +134,16 @@ def calc_divvy(start, stop, num_pass, fare_info):
 	[t1, c1, i1] = calc_route(num_pass, data1, None, 'walking')
 
 	bike_coord, bike_data, bike_map = google_req(divvy1_loc, divvy2_loc, "bicycling")
-	#print(divvy1)
-	#print(divvy2)
 	[bike_t, bike_c, bike_i] = calc_route(num_pass, bike_data, fare_info, 'bicycling')
 
 	coord3, data3, walk2_map = google_req(divvy2_loc, stop, "walking")
 	[t3, c3, i3] = calc_route(num_pass, data3, None, 'walking')
 
 	total_t = t1 + t3 + bike_t
-	#print(i1 + bike_i + i3)
 
 	return [total_t, bike_c, i1 + bike_i + i3], bike_map, walk1_map, walk2_map
 
-
+""" TO DELETE
 def calc_transit(start, stop, fare_info, travelers, mode):
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" +str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
 	r = req.get(url)
@@ -175,6 +173,7 @@ def calc_transit_cost(transit, fare_info):
 		total_cost = total_cost + float(fare_info['transit'][vehicle])
 	return total_cost
 
+"""
 
 def calc_uber(crd, ub_key, passengers):
 	url = 'https://api.uber.com/v1/estimates/price'
@@ -208,7 +207,7 @@ def calc_uber(crd, ub_key, passengers):
 			est_key = dicti["display_name"]
 			price = dicti["estimate"]
 			length = dicti["duration"]
-			uber_estimates[est_key] = [length/60, price]
+			uber_estimates[est_key] = [str(length/60)+" min", price]
 
 	return uber_estimates	
 
@@ -216,21 +215,28 @@ def calc_uber(crd, ub_key, passengers):
 def master(start, stop, travelers, city):
 	start = start + ' '+ city.replace("_", " ")
 	stop = stop + ' ' + city.replace("_", " ")
-	print(start)
 	fare_compare = {}
 	map_urls = []
-	print("menu/fare_info/"+city+".json")
 	fare_info = read_fare_info("menu/fare_info/"+city+".json")
 	#fare_info = read_fare_info("IL_taxi.json")
-
+	
 	coord, driving_data, fare_compare['driving_map'] = google_req(start, stop, 'driving')
+	print(coord)
 	fare_compare['taxi'] = calc_route(travelers, driving_data, fare_info, 'driving')
 
 	fare_compare['uber'] = calc_uber(coord, uber_key, travelers)
 	
 	public = 'transit&transit_routing_preference=fewer_transfers'
-	fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, fare_info, travelers, public)
+	coord, transit_data, fare_compare['transit_map'] = google_req(start, stop, 'transit')
+	fare_compare['public'] = calc_route(travelers, transit_data, fare_info, public)
+	#fare_compare['public'], fare_compare['transit_map'] = calc_transit(start, stop, fare_info, travelers, public)
+	#print("Old: ",fare_compare['public'])
 	#fare_compare['public'], fare_compare['transit_map'] = 
+
+	if fare_compare['taxi'][0] == 0:
+		fare_compare['valid'] = False
+	else:
+		fare_compare['valid'] = True
 
 	if city == "chicago":
 		fare_compare['divvy'], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
@@ -239,4 +245,4 @@ def master(start, stop, travelers, city):
 
 	return fare_compare
 
-#master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5)
+#master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5, 'Chicago')

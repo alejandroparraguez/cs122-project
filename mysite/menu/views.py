@@ -4,12 +4,9 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import render, get_object_or_404
 
-#from .models import choiceQuestion, addressQuestion
-
 from .directions import master
 from .forms import infoForm
 
-#fake_directions = {'driving':[5], 'taxi':[5, 10], 'uber':{'uberX':[4, 6], 'uberXL':[5, 7]}, 'public':[4, 11]}
 
 def get_travel_info(request):
 	if request.method == 'POST':
@@ -17,15 +14,23 @@ def get_travel_info(request):
 		if form.is_valid():
 			passengers = form.cleaned_data['passengers']
 			start_address = form.cleaned_data['startAddress']
+			print(start_address)
 			end_address = form.cleaned_data['endAddress']
+			print(end_address)
 			city = form.cleaned_data['city']
 			backend = master(start_address, end_address, passengers, city)
+			if backend['valid'] == True: 
+				if city == "chicago":
+					return render(request, 'menu/thanks.html', backend)
+				if city == "san_francisco":
+					return render(request, 'menu/thanksSF.html', backend)
+				if city == "new_york_city":
+					print("Going to NY")
+					return render(request, 'menu/thanksNY.html', backend)
+			else:
+				return render(request, 'menu/error.html')
 
-			#context['backend'] = backend
-			#print(start_address)
-			#return HttpResponseRedirect('/menu/thanks/')
-			#return HttpResponse(test)
-			return render(request, 'menu/thanks.html', backend) #fake_directions)#{"fake_directions": fake_directions})
+			
 	else:
 		form = infoForm()
 	return render(request, 'menu/index.html', {'form': form})

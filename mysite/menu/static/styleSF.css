@@ -1,0 +1,97 @@
+body {
+    background-image: url("SF.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    max-height: 2500px;
+    background-opacity:0.1;
+}
+
+#drivingLeft{
+    background-color: #0C76B2;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 500px;
+    margin-right: 0px;
+	margin-left: 50px;
+	max-width: 600px;        
+    float: left;
+    align-content:center;
+}
+
+#taxi{
+    margin: auto;
+    margin-right: 20px;
+	margin-left: 0px;	  
+    float: left;
+    align-content: space-around;
+}
+
+#DrivingMap{
+	border: 1px solid #000000;
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 0px;
+    float: left;
+    align-content: flex-end;
+}
+
+#Uber{
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 70px;
+    margin-bottom: 20px;
+    float: left;
+    align-content: space-around;
+}
+
+#PublicTrans{
+    background-color: #0C76B2;
+    margin: auto;
+    margin-top: 20px;
+    margin-right: 25px;
+	margin-left: 50px;
+	max-width: 600px;
+    float: left;
+    align-content: center;
+}
+
+#TransitMap{
+	border: 1px solid #000000;
+    margin: auto;
+    margin-right: 0px;
+	margin-left: 0px;
+    margin-bottom: 20px;	  
+    float: left;
+    align-content: flex-end;
+}
+
+#DivvyBikes{
+    background-color: #0C76B2;
+    margin: auto;
+    margin-top: 20px;
+    margin-right: 25px;
+    margin-left: 50px;
+    max-width: 600px;
+    float: left;
+    align-content: center;
+}
+
+#BikeMap{
+    border: 1px solid #000000;
+    margin: auto;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 20px;
+    float: left;
+    align-content: flex-end;
+}
+
+#Welcome{
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    max-height: 3000px; 
+    margin: auto;      
+    margin-top: 500px;
+    margin-bottom: 1000px;
+    align-content:center;
+}

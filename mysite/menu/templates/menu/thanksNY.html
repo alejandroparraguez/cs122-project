@@ -3,7 +3,7 @@
 <html>
     <head>
         <center>
-            <link href = "{% static 'style.css' %}" rel="stylesheet"  type="text/css">
+            <link href = "{% static 'styleNY.css' %}" rel="stylesheet"  type="text/css">
             <h1>Welcome to Fare Compare Results!</h1>
         </center>
     </head>
@@ -93,40 +93,6 @@
         </p>
     </div>
 
-
-    <div id='DivvyBikes'>
-        <div id = "BikeMap" >
-            <iframe
-            width="600"
-            height="350"
-            frameborder="0" style="border:0"
-            src="{{bike_map}}" allowfullscreen>
-            </iframe>
-        </div>
-
-        <h2>Divvy Bikes:</h2>
-        <table class="Divvy"; border=1px>
-            <tr>
-                <th> Time </th>
-                <th> Cost </th>
-            </tr>
-            <tr>
-                <td>{{ divvy.0 }}</td>
-                <td>{{ divvy.1 }}</td>
-            </tr>                
-        </table>
-       
-      
-
-        
-
-         <p>
-            <b>Directions: </b> <br>
-            {% for line in divvy.2 %}
-                <li>{{line}}</li> <br>
-            {% endfor %}
-        </p>
-    </div>
 
 </body>
 </html>

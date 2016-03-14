@@ -8,8 +8,16 @@
     },
 
     "transit": {
-        "BUS": 2.25,
-        "SUBWAY": 3,
-        "HEAVY_RAIL": 5
+        "BUS": 3,
+        "RAIL": ,
+        "METRO_RAIL": 5,
+        "SUBWAY":3,
+        "TRAM": , 
+        "HEAVY_RAIL": ,
+        "TROLLEYBUS": , 
+        "CABLE_CAR": 0,
+        "FERRY" : 0, 
+        "GONDOLA_LIFT":3, 
+        "OTHER": 0
     }
 }
