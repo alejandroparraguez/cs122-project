@@ -85,12 +85,10 @@ body {
     align-content: flex-end;
 }
 
-#Welcome{
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    max-height: 3000px; 
-    margin: auto;      
-    margin-top: 500px;
-    margin-bottom: 1000px;
-    align-content:center;
+#Footnote{
+    background-color:#D1E4F5;
+    position: fixed; 
+    bottom: 0; 
+    width:100%; 
+    text-align: center;  
 }

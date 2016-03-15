@@ -1,14 +1,20 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
-<body background = "error.jpg">
-<h1> This is embarrasing </h1>
-
-<p> Remember to: 
-	<li>Check origin and destination</li>
-	<li>Do the addresses exist?</li>
-	<li>Are the origin and destination in the same city?</li>
-	<li>Did you select the right city?</li>
-</p>
-</body>
+	<div id="Error">
+		<center>
+			<head>
+				<h1>This is embarrasing</h1>
+		        <link href ="{% static 'styleIndex.css' %}" rel="stylesheet"  type="text/css">
+			</head>
+			<body>
+				<p> Remember to: 
+					<li>Check origin and destination</li>
+					<li>Do the addresses exist?</li>
+					<li>Are the origin and destination in the same city?</li>
+					<li>Did you select the right city?</li>
+				</p>
+			</body>
+		</center>
+	</div>
 </html>

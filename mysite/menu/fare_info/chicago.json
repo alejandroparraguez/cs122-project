@@ -11,7 +11,13 @@
 	"transit": {
 		"BUS": 2.25,
 		"SUBWAY": 3,
-		"HEAVY_RAIL": 5
+		"HEAVY_RAIL": 5,
+        "RAIL": 3,
+        "METRO_RAIL": 3,
+        "TRAM": 0, 
+        "TROLLEYBUS": 0, 
+        "CABLE_CAR": 0,
+        "FERRY" : 0
 	},
 
 	"divvy":{

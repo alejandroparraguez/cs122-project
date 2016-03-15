@@ -95,3 +95,11 @@ body {
     margin-bottom: 1000px;
     align-content:center;
 }
+
+#Footnote{
+    background-color:#0C76B2;
+    position: fixed; 
+    bottom: 0; 
+    width:100%; 
+    text-align: center;  
+}

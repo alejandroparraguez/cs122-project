@@ -9,12 +9,12 @@
 
     "transit": {
         "BUS": 3,
-        "RAIL": ,
+        "RAIL": 0,
         "METRO_RAIL": 5,
         "SUBWAY":3,
-        "TRAM": , 
-        "HEAVY_RAIL": ,
-        "TROLLEYBUS": , 
+        "TRAM": 0, 
+        "HEAVY_RAIL": 0,
+        "TROLLEYBUS": 0, 
         "CABLE_CAR": 0,
         "FERRY" : 0, 
         "GONDOLA_LIFT":3, 
