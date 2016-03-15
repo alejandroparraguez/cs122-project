@@ -15,3 +15,4 @@ Caveats:
         the same service is provided at difference costs. Best estimates were used, and in
         some cases, were simply not available. If this is the case, public transportation
         fare should read "$ Not available."
+    3 - We wrote all html and css files.
