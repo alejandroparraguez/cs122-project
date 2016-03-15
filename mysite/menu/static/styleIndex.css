@@ -1,5 +1,5 @@
 body {
-    background-image: url("background.jpg");
+    background-image: url("highway4.JPG");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     max-height: 2500px;
@@ -16,6 +16,7 @@ body {
     align-content:center;
 }
 #Error{
+    background-color: #9BD5FA;
 	background-repeat: no-repeat;
     background-size: 100% 100%;
     max-height: 3000px; 

@@ -5,8 +5,7 @@
         "per_mile": "2.75",
         "per_min": "0.55",
         "first_passenger": "0",
-        "additional_passenger": "0",
-        "airport_tax": "4.00"
+        "additional_passenger": "0"
     },
 
     "transit": {

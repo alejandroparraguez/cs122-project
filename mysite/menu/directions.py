@@ -13,6 +13,7 @@ def read_fare_info(file_name):
 	'''
 	Inputs: file_name path of json fare info
 	Output: fare_info dictionary of fare info
+	Reads json file into a dictionary.
 	'''
 	with open(file_name) as data_file:
 		fare_info = json.load(data_file)
@@ -26,10 +27,9 @@ def google_req(start, stop, mode):
 	Outputs: coord list of start and stop coordinates
 			data dictionary of directions info from api request
 			embed_map string url for the embedded map
+	Sends request to google directions api, calls start_end_coord to get start/stop coordinates.
 	'''
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
-	if mode[:7] == 'transit':
-		print(url)
 	r = req.get(url)
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
@@ -44,6 +44,7 @@ def start_end_coord(start, stop, key, data):
 			key api key for google directions api
 			data dictionary of directions info
 	Outputs: list of start and stop latitudes and longitudes
+	Parses dictionary of directions info for stop/start coordinates.
 	'''
 	#Start coordinates
 	route0 = data['routes'][0]
@@ -73,6 +74,7 @@ def calc_route(num_pass, data, fare_info, mode):
 	Outputs: list of time in minutes (string), 
 					cost of transportation (string),
 					list of steps in transportation directions (strings)
+	Parses dictionary of directions info, and iterates through steps to calculate time and fare.
 	'''
 	meters = 0
 	time = data['routes'][0]['legs'][0]['duration']['text']
@@ -91,7 +93,9 @@ def calc_route(num_pass, data, fare_info, mode):
 		instruction_step = soup.get_text()
 		instructions.append(instruction_step)
 		test_i.append(step['html_instructions'])
+
 		meters += step['distance']['value']
+		#info from google directions API is not always standard, we search two locations for vehicle type
 		if mode == 'transit':
 			if 'transit_details' in step.keys():
 				transit.append(step['transit_details']['line']['vehicle']['type'])
@@ -103,6 +107,7 @@ def calc_route(num_pass, data, fare_info, mode):
 	miles = meters * 0.00062137
 	
 	fare = 0
+	#Calculate taxi fare
 	if mode == 'driving':
 		base = float(fare_info['taxi']['base_fare'])
 		per_mile = float(fare_info['taxi']["per_mile"])
@@ -117,6 +122,7 @@ def calc_route(num_pass, data, fare_info, mode):
 
 		fare = base + (per_mile * miles) + (per_min * minutes) + pass_fare
 
+	#Calculate divvy fare
 	if mode == 'bicycling':
 		fare = float(fare_info['divvy']['base_fare'])
 		second_thirty = float(fare_info['divvy']['second_thirty'])
@@ -131,6 +137,7 @@ def calc_route(num_pass, data, fare_info, mode):
 			fare += (time_chunks - 3) * next_thirty
 		fare = fare * num_pass
 
+	#Calculate public transit fare
 	if mode == 'transit':
 		for vehicle in transit:
 			if fare_info['transit'][vehicle] == "N/A":
@@ -138,7 +145,6 @@ def calc_route(num_pass, data, fare_info, mode):
 				break
 			else:
 				fare = fare + float(fare_info['transit'][vehicle])
-				print(type(fare))
 		
 		
 		if type(fare) == str:
@@ -152,6 +158,7 @@ def nearest_divvy(place):
 	'''
 	Inputs: place address string
 	Outputs: list of coordinates of nearest divvy bike station
+	Sends request to divvy api and find nearest station.
 	'''
 	google_url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+str(place)+'&key=' +str(geocode_key)
 	r = req.get(google_url)
@@ -175,6 +182,10 @@ def calc_divvy(start, stop, num_pass, fare_info):
 	Outputs: list of time in minutes (string), 
 					cost of transportation (string),
 					list of steps in transportation directions (strings)
+	Call calc_route for walking directions from starting address and nearest divvy station,
+	walking directions between destination address and nearest divvy station, and biking 
+	directions between the divvy stations. Aggregate the time, cost, and directions from
+	the three trips.
 	'''
 
 	divvy1 = nearest_divvy(start)
@@ -258,6 +269,8 @@ def master(start, stop, travelers, city):
 	Outputs: dictionary with keys for each mode of transportation and embedded map
 				values are lists of price, time, and instructions (if applicable)
 				or the url for the embedded map
+	Given a beginning address, destination address, number of passengers, and city, 
+	calculates travel time, travel cost, and instructions.
 	'''
 	start = start + ' '+ city.replace("_", " ")
 	stop = stop + ' ' + city.replace("_", " ")
@@ -280,10 +293,10 @@ def master(start, stop, travelers, city):
 		fare_compare['valid'] = False
 	else:
 		fare_compare['valid'] = True
+
+	#Only Chicago has divvy bikes
 	if city == "chicago":
 		[d_c, d_t, d_i], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
 		fare_compare['divvy'] = ["{} min".format(d_c), "$ {}".format(d_t), d_i]
 
 	return fare_compare
-
-
