@@ -1,5 +1,5 @@
-from django.apps import AppConfig
+#from django.apps import AppConfig
+#Created by Django, unmodified
 
-
-class MenuConfig(AppConfig):
-    name = 'menu'
+#class MenuConfig(AppConfig):
+#    name = 'menu'

@@ -3,10 +3,10 @@ import datetime
 #Created by Django, class written by us
 
 class infoForm(forms.Form):
-	'''
-	Creates class infoForm, with fields for start address, destination address,
-	number of passengers, and choice of city.
-	'''
+    '''
+    Creates class infoForm, with fields for start address, destination address,
+    number of passengers, and choice of city.
+    '''
     startAddress = forms.CharField(label='Start Address', max_length = 500)
     endAddress = forms.CharField(label='End Address', max_length = 500)
     city_choices = (("chicago", u'Chicago'),

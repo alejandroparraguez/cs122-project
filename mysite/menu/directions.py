@@ -92,9 +92,14 @@ def calc_route(num_pass, data, fare_info, mode):
 		instructions.append(instruction_step)
 		test_i.append(step['html_instructions'])
 		meters += step['distance']['value']
-		if mode[0:7] == 'transit' and 'transit_details' in step.keys():
-			transit.append(step['transit_details']['line']['vehicle']['type'])
-
+		if mode == 'transit':
+			if 'transit_details' in step.keys():
+				transit.append(step['transit_details']['line']['vehicle']['type'])
+			elif 'steps' in step.keys():
+				for substep in step['steps']:
+					if ('maneuver' in substep.keys()) and (substep['maneuver'].upper() in fare_info['transit'].keys()):
+						transit.append(substep['maneuver'].upper())
+	
 	miles = meters * 0.00062137
 	
 	fare = 0
@@ -126,11 +131,20 @@ def calc_route(num_pass, data, fare_info, mode):
 			fare += (time_chunks - 3) * next_thirty
 		fare = fare * num_pass
 
-	if mode[0:7] == 'transit':
+	if mode == 'transit':
 		for vehicle in transit:
-			fare = fare + float(fare_info['transit'][vehicle])
+			if fare_info['transit'][vehicle] == "N/A":
+				fare = "Not available"
+				break
+			else:
+				fare = fare + float(fare_info['transit'][vehicle])
+				print(type(fare))
 		
-		fare = fare * num_pass
+		
+		if type(fare) == str:
+			return [int(minutes), fare, instructions]
+		else:
+			fare = fare * num_pass
 
 	return [int(minutes), "{0:.2f}".format(round(fare,2)), instructions]
 	
@@ -251,18 +265,16 @@ def master(start, stop, travelers, city):
 	fare_compare = {}
 	map_urls = []
 	fare_info = read_fare_info("menu/fare_info/"+city+".json")
-	#fare_info = read_fare_info("IL_taxi.json")
 	
 	coord, driving_data, fare_compare['driving_map'] = google_req(start, stop, 'driving')
 	taxi_cost, taxi_time, taxi_i = calc_route(travelers, driving_data, fare_info, 'driving')
-	fare_compare['taxi'] = ["{} min".format(taxi_cost), "${}".format(taxi_time)]
+	fare_compare['taxi'] = ["{} min".format(taxi_cost), "$ {}".format(taxi_time)]
 
 	fare_compare['uber'] = calc_uber(coord, uber_key, travelers)
 	
-	#public = 'transit&transit_routing_preference=fewer_transfers'
 	coord, transit_data, fare_compare['transit_map'] = google_req(start, stop, 'transit')
 	public_cost, public_time, public_i = calc_route(travelers, transit_data, fare_info, 'transit') # public)
-	fare_compare['public'] = ["{} min".format(public_cost), "${}".format(public_time), public_i]
+	fare_compare['public'] = ["{} min".format(public_cost), "$ {}".format(public_time), public_i]
 
 	if fare_compare['taxi'][0] == "0 min":
 		fare_compare['valid'] = False
@@ -270,8 +282,8 @@ def master(start, stop, travelers, city):
 		fare_compare['valid'] = True
 	if city == "chicago":
 		[d_c, d_t, d_i], fare_compare['bike_map'], fare_compare['walk1_map'], fare_compare['walk2_map'] = calc_divvy(start, stop, travelers, fare_info)
-		fare_compare['divvy'] = ["{} min".format(d_c), "${}".format(d_t), d_i]
+		fare_compare['divvy'] = ["{} min".format(d_c), "$ {}".format(d_t), d_i]
 
 	return fare_compare
 
-#master("5433 South University Avenue, Chicago", "Art Institute, Chicago", 5, 'Chicago')
+

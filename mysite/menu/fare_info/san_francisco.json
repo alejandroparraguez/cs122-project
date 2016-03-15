@@ -18,6 +18,7 @@
         "HEAVY_RAIL": 4.75,
         "TROLLEYBUS": 7, 
         "CABLE_CAR": 7,
+        "GONDOLA_LIFT": "N/A",
         "FERRY" : 33
     }
 }

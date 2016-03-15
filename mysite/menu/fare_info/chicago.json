@@ -14,10 +14,11 @@
 		"HEAVY_RAIL": 5,
         "RAIL": 3,
         "METRO_RAIL": 3,
-        "TRAM": 0, 
-        "TROLLEYBUS": 0, 
-        "CABLE_CAR": 0,
-        "FERRY" : 0
+        "TRAM": "N/A", 
+        "TROLLEYBUS": "N/A", 
+        "CABLE_CAR": "N/A",
+        "GONDOLA_LIFT": "N/A",
+        "FERRY" : "N/A"
 	},
 
 	"divvy":{
