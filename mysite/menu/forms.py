@@ -5,7 +5,7 @@ import datetime
 class infoForm(forms.Form):
     '''
     Creates class infoForm, with fields for start address, destination address,
-    number of passengers, and choice of city.
+    number of passengers (limited integer field), and choice of city (as drop down menu).
     '''
     startAddress = forms.CharField(label='Start Address', max_length = 500)
     endAddress = forms.CharField(label='End Address', max_length = 500)
