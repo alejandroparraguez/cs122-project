@@ -18,7 +18,10 @@ def get_travel_info(request):
 			end_address = form.cleaned_data['endAddress']
 			print(end_address)
 			city = form.cleaned_data['city']
-			backend = master(start_address, end_address, passengers, city)
+			try:
+				backend = master(start_address, end_address, passengers, city)
+			except:
+				return render(request, 'menu/error.html')
 			if backend['valid'] == True: 
 				if city == "chicago":
 					return render(request, 'menu/thanks.html', backend)

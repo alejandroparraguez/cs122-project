@@ -10,22 +10,39 @@ map_key ='AIzaSyDrUubINuulSxDYp5rmG-NuvR-Zo_oLrmY'
 geocode_key = 'AIzaSyAiIUbZYNYCg7cuj73HxaXaSYJyeq_rFdM'
 
 def read_fare_info(file_name):
+	'''
+	Inputs: file_name path of json fare info
+	Output: fare_info dictionary of fare info
+	'''
 	with open(file_name) as data_file:
 		fare_info = json.load(data_file)
 	return fare_info
 
 def google_req(start, stop, mode):
+	'''
+	Inputs: start address string
+			stop address string
+			mode transportation string
+	Outputs: coord list of start and stop coordinates
+			data dictionary of directions info from api request
+			embed_map string url for the embedded map
+	'''
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + str(start)+ '&destination=' +str(stop)+ '&mode=' +mode+ '&key=' +key
-	#print(url)
 	r = req.get(url)
 	data = r.json()
 	coord = start_end_coord(start, stop, key, data)
-
 	embed_map = "https://www.google.com/maps/embed/v1/directions?key=" +map_key+ "&origin=" +str(start)+ "&destination="+str(stop) + '&mode=' +mode
 	return coord, data, embed_map
 	
 
 def start_end_coord(start, stop, key, data):
+	'''
+	Inputs: start address string
+			stop address string
+			key api key for google directions api
+			data dictionary of directions info
+	Outputs: list of start and stop latitudes and longitudes
+	'''
 	#Start coordinates
 	route0 = data['routes'][0]
 	leg0 = route0['legs'][0]
@@ -47,7 +64,14 @@ def start_end_coord(start, stop, key, data):
 	return [start_lat, start_long, end_lat, end_long]
 
 def calc_route(num_pass, data, fare_info, mode):
-	
+	'''
+	Inputs: num_pass integer number of passengers
+			data dictionary of directions 
+			mode string specifying mode of transportation
+	Outputs: list of time in minutes (string), 
+					cost of transportation (string),
+					list of steps in transportation directions (strings)
+	'''
 	meters = 0
 	time = data['routes'][0]['legs'][0]['duration']['text']
 	sec = data['routes'][0]['legs'][0]['duration']['value']
@@ -103,12 +127,16 @@ def calc_route(num_pass, data, fare_info, mode):
 	if mode[0:7] == 'transit':
 		for vehicle in transit:
 			fare = fare + float(fare_info['transit'][vehicle])
-		print(transit)
+		
 		fare = fare * num_pass
 
 	return [str(int(minutes)), "{0:.2f}".format(round(fare,2)), instructions]
 	
 def nearest_divvy(place):
+	'''
+	Inputs: place address string
+	Outputs: list of coordinates of nearest divvy bike station
+	'''
 	google_url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+str(place)+'&key=' +str(geocode_key)
 	r = req.get(google_url)
 	address_data = r.json()
@@ -123,6 +151,15 @@ def nearest_divvy(place):
 	return coord
 
 def calc_divvy(start, stop, num_pass, fare_info):
+	'''
+	Inputs: start address string
+			stop address string
+			num_pass integer number of passengers
+			fare_info dictionary of fare info
+	Outputs: list of time in minutes (string), 
+					cost of transportation (string),
+					list of steps in transportation directions (strings)
+	'''
 
 	divvy1 = nearest_divvy(start)
 	divvy1_loc = str(divvy1[1])+','+str(divvy1[0])
@@ -176,6 +213,9 @@ def calc_transit_cost(transit, fare_info):
 """
 
 def calc_uber(crd, ub_key, passengers):
+	'''
+	Alejandro this is you.
+	'''
 	url = 'https://api.uber.com/v1/estimates/price'
 
 	parameters = {
@@ -213,8 +253,18 @@ def calc_uber(crd, ub_key, passengers):
 
 
 def master(start, stop, travelers, city):
+	'''
+	Inputs: start- beginning address string
+			stop- destination address string
+			travelers- integer number of passengers
+			city- location city string
+	Outputs: dictionary with keys for each mode of transportation and embedded map
+				values are lists of price, time, and instructions (if applicable)
+				or the url for the embedded map
+	'''
 	start = start + ' '+ city.replace("_", " ")
 	stop = stop + ' ' + city.replace("_", " ")
+
 	fare_compare = {}
 	map_urls = []
 	fare_info = read_fare_info("menu/fare_info/"+city+".json")
