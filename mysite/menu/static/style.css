@@ -7,7 +7,7 @@ body {
 }
 
 #drivingLeft{
-    background-color: #D1E4F5;
+    background-color: #ADC5DF;
     margin: auto;
     margin-top: 20px;
     margin-right: 0px;
@@ -44,7 +44,7 @@ body {
 }
 
 #PublicTrans{
-    background-color: #D1E4F5;
+    background-color: #ADC5DF;
     margin: auto;
     margin-top: 20px;
     margin-right: 25px;
@@ -65,7 +65,7 @@ body {
 }
 
 #DivvyBikes{
-    background-color: #D1E4F5;
+    background-color: #ADC5DF;
     margin: auto;
     margin-top: 20px;
     margin-right: 25px;
@@ -86,7 +86,7 @@ body {
 }
 
 #Footnote{
-    background-color:#D1E4F5;
+    background-color:#ADC5DF;
     position: fixed; 
     bottom: 0; 
     width:100%; 
